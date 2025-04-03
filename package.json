@@ -1,0 +1,75 @@
+{
+  "name": "oblecsejinak",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "nuxt typecheck --no-emit",
+    "cleanup": "nuxt cleanup && pnpm dedupe",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx server/database/migrate.ts"
+  },
+  "dependencies": {
+    "@nuxthub/core": "0.8.17",
+    "@primevue/forms": "^4.3.2",
+    "@primevue/themes": "^4.2.5",
+    "@vee-validate/nuxt": "^4.15.0",
+    "@vee-validate/yup": "^4.15.0",
+    "drizzle-orm": "^0.39.3",
+    "nuxt": "^3.15.0",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.2.5",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "yup": "^1.6.1"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@nuxt/devtools": "^1.7.0",
+    "@nuxt/eslint": "0.7.4",
+    "@nuxt/image": "^1.9.0",
+    "@nuxt/scripts": "0.10.5",
+    "@nuxtjs/color-mode": "^3.5.2",
+    "@nuxtjs/robots": "^5.1.0",
+    "@nuxtjs/sitemap": "^7.0.1",
+    "@pinia/nuxt": "^0.9.0",
+    "@primevue/nuxt-module": "^4.2.5",
+    "@unhead/vue": "^1",
+    "@unocss/nuxt": "^0.65.4",
+    "@vueuse/nuxt": "^12.3.0",
+    "changelogen": "^0.5.7",
+    "drizzle-kit": "^0.30.4",
+    "eslint": "^9.20.1",
+    "happy-dom": "^15.11.7",
+    "lint-staged": "^15.3.0",
+    "magic-regexp": "^0.8.0",
+    "nuxt-aos": "^1.2.5",
+    "nuxt-headlessui": "^1.2.0",
+    "nuxt-nodemailer": "^1.1.2",
+    "nuxt-radash": "^1.0.0",
+    "pinia": "^2.3.0",
+    "simple-git-hooks": "^2.11.1",
+    "taze": "^0.18.0",
+    "typescript": "~5.7.2",
+    "unocss": "^65.5.0",
+    "vue-tsc": "^2.2.0",
+    "wrangler": "^3.109.1"
+  },
+  "lint-staged": {
+    "*": "eslint --fix"
+  },
+  "simple-git-hooks": {
+    "commit-msg": "npx commitlint --edit $1",
+    "pre-commit": "npx lint-staged"
+  },
+  "overrides": {
+    "vue": "latest"
+  }
+}
