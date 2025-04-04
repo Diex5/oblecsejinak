@@ -99,7 +99,7 @@ const { removeFromCart, toggleCart } = useCart()
                     </p>
                     <div class="mt-6">
                       <I18nLink to="/pokladna">
-                        <Button v-ripple class="w-full" label="Přejít k pokladně" size="large" />
+                        <Button v-ripple variant="primary" class="w-full bg-primary-500 text-gray-700" label="Přejít k pokladně" size="large" />
                       </I18nLink>
                     </div>
                     <div class="mt-6 flex justify-center text-center text-sm text-gray-500 w-full">

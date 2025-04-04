@@ -168,7 +168,7 @@ const showBar = computed(() => {
   <div>
     <div class="container px-6 mx-auto">
       <!-- Breadcrumb -->
-      <div class="py-4 mb-8">
+      <div class="py-4 mb-8 ">
         <Breadcrumb :home="home" :model="items">
           <template #item="{ item, props }">
             <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>

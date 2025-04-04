@@ -6,14 +6,14 @@ import { themeColors } from './unocss.config.ts'
 const primePreset = definePreset(Aura, {
   semantic: {
     primary: themeColors.primary,
-    colorScheme: {
+    /* colorScheme: {
       light: {
         surface: themeColors.surface,
       },
       dark: {
         surface: themeColors.surface,
       },
-    },
+    }, */
   },
 })
 export default defineNuxtConfig({
@@ -103,7 +103,7 @@ export default defineNuxtConfig({
         preset: primePreset,
         options: {
           darkModeSelector: false,
-
+          cssLayer: false,
         },
       },
     },

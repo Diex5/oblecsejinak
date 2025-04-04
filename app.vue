@@ -13,4 +13,8 @@ useHead({
   </NuxtLayout>
 </template>
 
-<style></style>
+<style>
+.p-button{
+  @apply bg-red-500 text-white border-none rounded-lg;
+}
+</style>
