@@ -212,7 +212,7 @@ const navigationFooter = ref([
           severity="secondary"
         />
         <Button
-          icon="pi pi-shopping-cart" text
+          icon="pi pi-cart-plus" text
           class="text-surface-900 dark:text-surface-0 [&>.p-button-icon]:!text-xl [&>.p-button-icon]:!leading-none"
           severity="secondary"
         />

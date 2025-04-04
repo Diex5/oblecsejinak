@@ -213,9 +213,9 @@ const formattedReviews = computed(() => {
     <div w-full>
       <Button
         w-full
-        size="large" font-oswald
-        class="!text-1.8rem !py-4 !font-medium" bg-primary-500 text-black
-        icon="pi pi-shopping-cart"
+        size="large"
+        class="!text-1.8rem !py-4 font-oswald !duration-450 !font-medium !text-black" bg-primary-400
+        icon="pi pi-cart-plus !text-1.8rem"
         label="Přidat do košíku"
         @click="addToCart({ product, variant: { colorId: 2, sizeId: 3, price: 997 } })"
       />

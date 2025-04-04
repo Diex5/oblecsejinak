@@ -1,14 +1,19 @@
 <script lang=ts setup>
-const { isCartOpened } = storeToRefs(useCart())
 </script>
 
 <template>
   <div font-sans>
     <Navigation />
     <NuxtLoadingIndicator />
-    <div>
-      <slot />
-    </div>
+    <ClientOnly>
+      <template #fallback>
+        <SpaLoading />
+      </template>
+      <div>
+        <slot />
+      </div>
+    </ClientOnly>
+
     <!--  <Footer /> -->
   </div>
 </template>

@@ -63,7 +63,7 @@ const addToCartMobile = (variant: any) => {
           w-full
           size="large" font-oswald
           class="!text-1.4rem  !font-medium md:flex! hidden! !text-black" h-fit bg-primary-500
-          icon="pi pi-shopping-cart"
+          icon="pi pi-cart-plus"
           label="Přidat do košíku"
           @click="addToCart({ product, variant: { colorId: 2, sizeId: 3, price: 997 } })"
         />
@@ -72,8 +72,8 @@ const addToCartMobile = (variant: any) => {
         <Button
           w-full
           size="large"
-          font-oswald class="!text-1.4rem md:hidden! flex!  !text-black! !font-medium"
-          h-fit bg-primary-500 icon="pi pi-shopping-cart"
+          class="!text-1.4rem md:hidden! flex!  font-oswald !text-black "
+          h-fit bg-primary-500 icon="pi pi-cart-plus"
           label="Vybrat velikost"
           @click="visible = true"
         />
@@ -141,9 +141,9 @@ const addToCartMobile = (variant: any) => {
         <div w-full>
           <Button
             w-full
-            size="large" font-oswald
-            class="!text-1.4rem !py-4 !font-medium text-black!" bg-primary-500
-            icon="pi pi-shopping-cart"
+            size="large"
+            class="!text-1.4rem !py-4 font-oswald  !text-black" bg-primary-500
+            icon="pi pi-cart-plus"
             label="Přidat do košíku"
             @click="addToCartMobile({ variant: { colorId: 2, sizeId: 3, price: 997 } })"
           />

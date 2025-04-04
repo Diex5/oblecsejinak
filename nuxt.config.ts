@@ -18,6 +18,7 @@ const primePreset = definePreset(Aura, {
 })
 export default defineNuxtConfig({
   modules: ['@nuxthub/core',
+    '@primevue/nuxt-module',
     '@nuxt/eslint',
     '@vueuse/nuxt',
     '@unocss/nuxt',
@@ -25,7 +26,6 @@ export default defineNuxtConfig({
     /*  '@nuxtjs/color-mode', */
     'nuxt-radash',
     '@nuxt/image',
-    '@primevue/nuxt-module',
     /* 'nuxt-aos', */
     '@nuxtjs/sitemap',
     '@nuxtjs/robots',
@@ -37,6 +37,14 @@ export default defineNuxtConfig({
   ],
   ssr: false,
   devtools: { enabled: true },
+  app: {
+    head: {
+      htmlAttrs: { lang: 'cs' },
+      title: 'OblecSeJinak',
+    },
+    pageTransition: false,
+    layoutTransition: false,
+  },
   css: [
     '@unocss/reset/tailwind.css',
     'primeicons/primeicons.css',
@@ -63,6 +71,8 @@ export default defineNuxtConfig({
     payloadExtraction: false,
     typedPages: true,
     componentIslands: true,
+    treeshakeClientOnly: false,
+
   },
   compatibilityDate: '2024-11-01',
   nitro: {
