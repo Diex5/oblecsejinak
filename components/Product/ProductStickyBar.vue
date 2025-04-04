@@ -68,15 +68,15 @@ const addToCartMobile = (variant: any) => {
         @click="addToCart({ product, variant: { colorId: 2, sizeId: 3, price: 997 } })"
       />
       <Button
-        md:hidden
-        flex w-full
+
+        w-full
         size="large"
-        font-oswald class="!text-1.4rem !py-4 !font-medium"
+        font-oswald class="!text-1.4rem md:hidden! flex !py-4 !font-medium"
         h-fit bg-primary-500 text-black icon="pi pi-shopping-cart"
         label="Vybrat velikost"
         @click="visible = true"
       />
-      <Dialog v-model:visible="visible" modal header="Edit Profile" :style="{ width: '25rem' }">
+      <Dialog v-model:visible="visible" class="md:hidden! block" modal header="Edit Profile" :style="{ width: '25rem' }">
         <div class="mt-3">
           <div class="text-lg font-medium text-surface-900 mb-1">
             Barva
