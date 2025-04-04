@@ -22,7 +22,7 @@ export default defineNuxtConfig({
     '@vueuse/nuxt',
     '@unocss/nuxt',
     '@pinia/nuxt',
-    '@nuxtjs/color-mode',
+    /*  '@nuxtjs/color-mode', */
     'nuxt-radash',
     '@nuxt/image',
     '@primevue/nuxt-module',
@@ -41,10 +41,10 @@ export default defineNuxtConfig({
     '@unocss/reset/tailwind.css',
     'primeicons/primeicons.css',
   ],
-  colorMode: {
+  /* colorMode: {
     classSuffix: '',
     preference: 'light',
-  },
+  }, */
   runtimeConfig: {
 
     public: {

@@ -26,7 +26,7 @@ defineProps({
 <template>
   <div class="flex-1">
     <!-- Název produktu -->
-    <h1 class="text-4xl lg:text-6xl font-semibold text-surface-900 font-oswald tracking-wide">
+    <h1 class="text-4xl dark:text-red-500 lg:text-6xl font-semibold text-surface-900 font-oswald tracking-wide">
       {{ name }}
     </h1>
 
