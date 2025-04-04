@@ -162,22 +162,11 @@ const showBar = computed(() => {
   if (width.value === undefined) return false
   return !isVisible.value
 })
-
-// Debugovací zpráva
-const debugInfo = computed(() => {
-  return {
-    device: width.value <= 768 ? 'Mobile' : 'Desktop',
-    width: width.value,
-    visibilityRatio: Math.round(currentVisibility.value * 100) / 100,
-    isVisible: isVisible.value,
-    showBar: showBar.value,
-  }
-})
 </script>
 
 <template>
   <div>
-    <div class="container px-6 py-14 md:px-12 lg:px-20 mx-auto">
+    <div class="container px-6 mx-auto">
       <!-- Breadcrumb -->
       <div class="py-4 mb-8">
         <Breadcrumb :home="home" :model="items">
@@ -200,7 +189,7 @@ const debugInfo = computed(() => {
       <!-- Galerie produktu -->
       <ProductGallery :images="product.images" />
 
-      <div ref="mainSection" class="mt-16 flex items-start gap-1rem md:gap-2rem lg:flex-row flex-col">
+      <div ref="mainSection" class="mt-16 flex items-start gap-1rem md:gap-6rem lg:flex-row flex-col">
         <!-- Informace o produktu -->
         <ProductInfo
           :name="product.name"
