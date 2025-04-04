@@ -1,4 +1,6 @@
-<script setup>
+<script setup lang=ts>
+import { useIntersectionObserver, useWindowSize } from '@vueuse/core'
+
 // Mock data pro produkt
 const product = ref({
   id: 'tirko-premium-cotton',
@@ -129,6 +131,48 @@ const addToCart = () => {
   // Tady by byla implementace přidání do košíku
   alert(`Přidáno do košíku: ${product.value.name}, barva: ${currentColor.value.name}, velikost: ${currentSize.value.label}, počet: ${count.value}`)
 }
+const mainSection = ref(null)
+const isVisible = ref(true)
+const currentVisibility = ref(1) // Uložíme aktuální poměr viditelnosti pro debugging
+
+// Detect screen size
+const { width } = useWindowSize()
+
+// Rozšířené pozorování s více prahy
+useIntersectionObserver(
+  mainSection,
+  ([entry]) => {
+    // Uložíme aktuální poměr viditelnosti pro debugging
+    currentVisibility.value = entry.intersectionRatio
+
+    // Různé prahy pro různá zařízení
+    const threshold = width.value <= 768 ? 0.1 : 0.2
+    isVisible.value = entry.intersectionRatio > threshold
+  },
+  {
+    // Použijeme mnoho prahů pro jemnější kontrolu
+    threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0],
+    // Můžeme přidat margin pro lepší timing
+    rootMargin: '0px 0px 100px 0px', // Přidá 100px pod pozorovaný element
+  },
+)
+
+// Zjednodušená podmínka
+const showBar = computed(() => {
+  if (width.value === undefined) return false
+  return !isVisible.value
+})
+
+// Debugovací zpráva
+const debugInfo = computed(() => {
+  return {
+    device: width.value <= 768 ? 'Mobile' : 'Desktop',
+    width: width.value,
+    visibilityRatio: Math.round(currentVisibility.value * 100) / 100,
+    isVisible: isVisible.value,
+    showBar: showBar.value,
+  }
+})
 </script>
 
 <template>
@@ -156,7 +200,7 @@ const addToCart = () => {
       <!-- Galerie produktu -->
       <ProductGallery :images="product.images" />
 
-      <div class="mt-16 flex items-start gap-1rem md:gap-2rem lg:flex-row flex-col">
+      <div ref="mainSection" class="mt-16 flex items-start gap-1rem md:gap-2rem lg:flex-row flex-col">
         <!-- Informace o produktu -->
         <ProductInfo
           :name="product.name"
@@ -192,16 +236,23 @@ const addToCart = () => {
 
       <!-- Accordion -->
     </div>
+
+    <ProductStickyBar
+      :product="product"
+      :show-bar="showBar"
+      :selected-size="selectedSize"
+      :selected-color="selectedColor"
+      :count="count"
+      @update-color="updateColor"
+      @update-size="updateSize"
+      @increment-count="incrementCount"
+      @decrement-count="decrementCount"
+    />
     <div class="mt-16">
       <TestimonialSlideGradient />
     </div>
     <div container class="mt-16">
       <ProductAccordion :items="product.accordion" />
     </div>
-    <!--  <div fixed bottom-0 mx-auto container flex justify-center items-center left-0 w-full z-10>
-      <Button icon="pi pi-arrow-down" mx-auto text-1rem bg-primary-500 text-white font-600 md:w="50%" w-full>
-        Vybrat barvu a velikost
-      </Button>
-    </div> -->
   </div>
 </template>

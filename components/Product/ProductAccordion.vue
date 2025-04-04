@@ -13,18 +13,18 @@ defineProps({
 </script>
 
 <template>
-  <div class="w-full flex items-center justify-center">
+  <div class="w-full flex  items-center justify-center">
     <Accordion class="w-full">
       <AccordionPanel
         v-for="item in items"
         :key="item.value"
         :value="item.value"
       >
-        <AccordionHeader class="text-lg font-medium">
+        <AccordionHeader class="text-2xl font-medium">
           {{ item.header }}
         </AccordionHeader>
         <AccordionContent>
-          <div class="leading-relaxed text-base text-surface-700">
+          <div class="leading-relaxed text-lg text-surface-700">
             {{ item.content }}
           </div>
         </AccordionContent>

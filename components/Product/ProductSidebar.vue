@@ -148,10 +148,10 @@ const formattedReviews = computed(() => {
           :key="color.id"
           class="w-10 h-10 flex-shrink-0 rounded-full mr-4 cursor-pointer transition-all duration-300 relative"
           :style="{ backgroundColor: color.hex }"
-          :class="selectedColor === color.id ? 'ring-2 ring-offset-2 ring-offset-black shadow-md p-3' : 'opacity-80'"
+          :class="selectedColor === color.id ? 'ring-3 ring-offset-2 ring-offset-primary-600 shadow-md p-3' : 'opacity-80'"
           @click="$emit('update-color', color.id)"
         >
-          <i v-if="selectedColor === color.id" class="pi pi-check absolute top-50% transform -translate-x-1/2 -translate-y-1/2    left-50% m-auto" />
+          <i v-if="selectedColor === color.id" :class="color.name.toLowerCase() === 'černá' ? 'text-white' : '' " class="pi pi-check absolute top-50% transform -translate-x-1/2 -translate-y-1/2 text-1.2rem   left-50% m-auto" />
 
           <!--  <span v-if="selectedColor === color.id" class="absolute top-7 left-1/2 transform -translate-x-1/2 text-sm whitespace-nowrap">
             {{ color.name }}
@@ -172,7 +172,7 @@ const formattedReviews = computed(() => {
           class="h-10 w-10 sm:h-12 sm:w-12 text-surface-900 inline-flex justify-center items-center flex-shrink-0 rounded-md cursor-pointer hover:bg-surface-100 duration-150 transition-colors"
           :class="[
             selectedSize === size.id
-              ? 'border-primary border-2 text-primary font-medium'
+              ? 'border-primary-600 bg-primary-500 border-2 shadow-md text-primary font-800 '
               : 'border border-surface-300',
           ]"
           @click="$emit('update-size', size.id)"
@@ -210,13 +210,16 @@ const formattedReviews = computed(() => {
     </div>
 
     <!-- Tlačítko pro přidání do košíku -->
-    <Button
-      size="large" font-oswald
-      class="!text-1.8rem !py-4 !font-medium" bg-primary-500 text-black
-      icon="pi pi-shopping-cart"
-      label="Přidat do košíku"
-      @click="addToCart({ product, variant: { colorId: 2, sizeId: 3, price: 997 } })"
-    />
+    <div w-full>
+      <Button
+        w-full
+        size="large" font-oswald
+        class="!text-1.8rem !py-4 !font-medium" bg-primary-500 text-black
+        icon="pi pi-shopping-cart"
+        label="Přidat do košíku"
+        @click="addToCart({ product, variant: { colorId: 2, sizeId: 3, price: 997 } })"
+      />
+    </div>
 
     <!-- Doporučení -->
     <div class="bg-surface-50 rounded-lg p-4 mb-6 mt-4 shadow-sm">

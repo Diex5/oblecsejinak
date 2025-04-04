@@ -7,7 +7,7 @@ const { removeFromCart, toggleCart } = useCart()
 
 <template>
   <HeadlessTransitionRoot as="template" :show="isCartOpened">
-    <HeadlessDialog class="relative z-10" @close="isCartOpened = false">
+    <HeadlessDialog class="relative z-999" @close="isCartOpened = false">
       <!-- Překrytí pozadí -->
       <HeadlessTransitionChild
         as="template"
