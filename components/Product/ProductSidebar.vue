@@ -214,7 +214,7 @@ const formattedReviews = computed(() => {
       <Button
         w-full
         size="large"
-        class="!text-1.8rem !py-4 font-oswald !duration-450 !font-medium !text-black" bg-primary-400
+        class="!text-2rem !py-4 font-oswald! !duration-450 !font-medium !text-black" bg-primary-400
         icon="pi pi-cart-plus !text-1.8rem"
         label="Přidat do košíku"
         @click="addToCart({ product, variant: { colorId: 2, sizeId: 3, price: 997 } })"
