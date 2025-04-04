@@ -58,24 +58,27 @@ const addToCartMobile = (variant: any) => {
       </div>
     </div>
     <div w="md:30% full">
-      <Button
-        md:flex hidden
-        w-full
-        size="large" font-oswald
-        class="!text-1.4rem !py-4 !font-medium text-black!" h-fit bg-primary-500
-        icon="pi pi-shopping-cart"
-        label="Přidat do košíku"
-        @click="addToCart({ product, variant: { colorId: 2, sizeId: 3, price: 997 } })"
-      />
-      <Button
-
-        w-full
-        size="large"
-        font-oswald class="!text-1.4rem md:hidden! flex !py-4 text-black! !font-medium"
-        h-fit bg-primary-500 icon="pi pi-shopping-cart"
-        label="Vybrat velikost"
-        @click="visible = true"
-      />
+      <div md:flex hidden>
+        <Button
+          md:flex hidden
+          w-full
+          size="large" font-oswald
+          class="!text-1.4rem !py-4 !font-medium text-black!" h-fit bg-primary-500
+          icon="pi pi-shopping-cart"
+          label="Přidat do košíku"
+          @click="addToCart({ product, variant: { colorId: 2, sizeId: 3, price: 997 } })"
+        />
+      </div>
+      <div md:hidden flex>
+        <Button
+          w-full
+          size="large"
+          font-oswald class="!text-1.4rem md:hidden! flex !py-4 text-black! !font-medium"
+          h-fit bg-primary-500 icon="pi pi-shopping-cart"
+          label="Vybrat velikost"
+          @click="visible = true"
+        />
+      </div>
       <Dialog v-model:visible="visible" class="md:hidden! block" modal header="Edit Profile" :style="{ width: '25rem' }">
         <div class="mt-3">
           <div class="text-lg font-medium text-surface-900 mb-1">
@@ -140,7 +143,7 @@ const addToCartMobile = (variant: any) => {
           <Button
             w-full
             size="large" font-oswald
-            class="!text-1.8rem !py-4 !font-medium" bg-primary-500 text-black
+            class="!text-1.4rem !py-4 !font-medium text-black!" bg-primary-500
             icon="pi pi-shopping-cart"
             label="Přidat do košíku"
             @click="addToCartMobile({ variant: { colorId: 2, sizeId: 3, price: 997 } })"
