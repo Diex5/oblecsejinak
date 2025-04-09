@@ -74,7 +74,7 @@ const addToCartMobile = (variant: any) => {
           size="large"
           class="!text-1.4rem md:hidden! flex!  font-oswald! !text-black "
           h-fit bg-primary-500 icon="pi pi-cart-plus"
-          label="Vybrat velikost"
+          label="Koupit"
           @click="visible = true"
         />
       </div>

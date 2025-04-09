@@ -26,12 +26,12 @@ defineProps({
 <template>
   <div class="flex-1">
     <!-- Název produktu -->
-    <h1 class="text-4xl dark:text-red-500 lg:text-6xl font-semibold text-surface-900 font-oswald tracking-wide">
+    <h1 v-motion-fade-visible-once class="text-4xl dark:text-red-500 lg:text-6xl font-semibold text-surface-900 font-oswald tracking-wide">
       {{ name }}
     </h1>
 
     <!-- Popis produktu -->
-    <p class="mt-6 text-xl font-medium text-surface-800 leading-relaxed">
+    <p v-motion-fade-visible-once class="mt-6 text-xl font-medium text-surface-800 leading-relaxed">
       {{ description }}
     </p>
 
@@ -41,6 +41,7 @@ defineProps({
         <li
           v-for="(feature, index) in features"
           :key="index"
+          v-motion-fade-visible-once
           class="text-surface-700 leading-relaxed"
         >
           {{ feature }}
@@ -50,7 +51,7 @@ defineProps({
 
     <!-- Záložky s informacemi -->
     <div class="mt-12 text-xl">
-      <Tabs value="0" bg-transparent>
+      <Tabs v-motion-fade-visible-once value="0" bg-transparent>
         <TabList class="bg-transparent border-b border-surface-200 font-600 font-oswald ">
           <Tab
             v-for="tab in tabs"
@@ -61,7 +62,7 @@ defineProps({
             {{ tab.label }}
           </Tab>
         </TabList>
-        <TabPanels class="!px-0 bg-transparent pt-6">
+        <TabPanels class="!px-0 bg-transparent  pt-6">
           <TabPanel
             v-for="tab in tabs"
             :key="tab.id"

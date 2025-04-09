@@ -30,6 +30,11 @@ const product = ref({
     { id: 'XL', label: 'XL', active: false },
     { id: 'XXL', label: 'XXL', active: false },
   ],
+  variants: [
+    { id: 'Pásnké', label: 'Pánské', active: false },
+    { id: 'Dámské', label: 'Dámské', active: true },
+    { id: 'Detské', label: 'Detské', active: false },
+  ],
   images: [
     { src: 'https://merchize.com/wp-content/uploads/2021/07/AOP-T-shirt-3-copy.jpg', alt: 'TIRKO – hlavní pohled' },
     { src: 'https://cdn.leonardo.ai/users/522075df-9aa6-4010-a4cc-9c8e1578895b/generations/f2646b7f-5bf7-48b0-80b5-178d4ac0ec5d/segments/4:4:1/Flux_Schnell_a_plain_white_background_with_a_modern_amateursty_3.jpeg', alt: 'TIRKO – detail materiálu' },
@@ -102,6 +107,7 @@ const items = ref([
 const count = ref(1)
 const selectedColor = ref(product.value.colors.find(c => c.active).id)
 const selectedSize = ref(product.value.sizes.find(s => s.active).id)
+const selectedVariant = ref(product.value.variants.find(s => s.active).id)
 
 // Pomocné funkce
 const decrementCount = () => {
@@ -120,6 +126,9 @@ const updateColor = colorId => {
 
 const updateSize = sizeId => {
   selectedSize.value = sizeId
+}
+const updateVariant = variantId => {
+  selectedVariant.value = variantId
 }
 
 // Formátování ceny
@@ -162,13 +171,23 @@ const showBar = computed(() => {
   if (width.value === undefined) return false
   return !isVisible.value
 })
+
+const initial = ref({
+  y: 100,
+  opacity: 0,
+})
+
+const enter = ref({
+  y: 0,
+  opacity: 1,
+})
 </script>
 
 <template>
   <div>
     <div class="container px-6 mx-auto">
       <!-- Breadcrumb -->
-      <div class="py-4 mb-8 ">
+      <div v-motion-fade-visible-once class="py-4 mb-8 ">
         <Breadcrumb :home="home" :model="items">
           <template #item="{ item, props }">
             <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
@@ -187,9 +206,13 @@ const showBar = computed(() => {
       </div>
 
       <!-- Galerie produktu -->
-      <ProductGallery :images="product.images" />
+      <ProductGallery
+        v-motion
+        :initial="initial"
+        :enter="enter" :images="product.images"
+      />
 
-      <div ref="mainSection" class="mt-16 flex items-start gap-1rem md:gap-6rem lg:flex-row flex-col">
+      <div ref="mainSection" class="v-motion-fade-visible mt-16 flex items-start gap-1rem md:gap-6rem lg:flex-row flex-col">
         <!-- Informace o produktu -->
         <ProductInfo
           :name="product.name"
@@ -208,10 +231,12 @@ const showBar = computed(() => {
           :viewers="product.viewers"
           :colors="product.colors"
           :sizes="product.sizes"
+          :variants="product.variants"
           :stock="product.stock"
           :count="count"
           :selected-color="selectedColor"
           :selected-size="selectedSize"
+          :selected-variant="selectedVariant"
           :benefits="product.benefits"
           :recommendation="product.recommendation"
           :video-thumbnail="product.videoThumbnail"
@@ -220,6 +245,7 @@ const showBar = computed(() => {
           @decrement-count="decrementCount"
           @update-color="updateColor"
           @update-size="updateSize"
+          @update-variant="updateVariant"
         />
       </div>
 

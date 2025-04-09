@@ -47,6 +47,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  selectedVariant: {
+    type: String,
+    required: true,
+  },
   benefits: {
     type: Array,
     required: true,
@@ -59,13 +63,17 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  variants: {
+    type: Array,
+    required: true,
+  },
   formatPrice: {
     type: Function,
     required: true,
   },
 })
 
-const emit = defineEmits(['increment-count', 'decrement-count', 'update-color', 'update-size'])
+const emit = defineEmits(['increment-count', 'decrement-count', 'update-color', 'update-size', 'update-variant'])
 
 const { addToCart } = useCart()
 // Výpočet počtu hvězdiček
@@ -76,6 +84,13 @@ const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 :
 // Zaokrouhlené hodnocení pro zobrazení
 const formattedRating = computed(() => props.rating.toFixed(1))
 
+const selectedCity = ref()
+const cities = ref([
+  { name: 'Pánské', code: 'NY' },
+  { name: 'Ženské', code: 'RM' },
+  { name: 'Dětské', code: 'LDN' },
+
+])
 // FOMO zprávy pro nízký stav zásob
 const stockMessage = computed(() => {
   if (props.stock === 'low') {
@@ -94,9 +109,19 @@ const formattedReviews = computed(() => {
 </script>
 
 <template>
-  <div class="w-full lg:w-[30rem] relative flex flex-col gap-4">
+  <div v-motion-fade-visible-once class="w-full lg:w-[30rem] relative flex flex-col gap-4">
     <!-- Počet sledujících -->
-    <div class="flex items-center justify-center text-surface-900 bg-surface-50 p-3 rounded-lg shadow-sm">
+    <div
+      v-motion v-motion-slide-bottom
+      :delay="400" :duration="200" class="flex items-center justify-center text-surface-900 bg-surface-50 p-3 rounded-lg shadow-sm"
+    >
+      <div class="relative w-3 h-3" mr-4rem>
+        <!-- Základní bod -->
+        <div class="absolute inset-0 bg-red-500 rounded-full blur-3 z-10" />
+
+        <!-- Glow efekt -->
+        <div class="absolute inset-0 bg-red-400 rounded-full blur-sm opacity-50 duration-50 delay-1200  animate-ping z-0" />
+      </div>
       <i class="pi pi-users !text-xl !leading-none mr-4 text-primary" />
       <span class="text-base font-medium"><b>{{ viewers }} lidí</b> si právě prohlíží tento produkt.</span>
     </div>
@@ -146,9 +171,9 @@ const formattedReviews = computed(() => {
         <div
           v-for="color in colors"
           :key="color.id"
-          class="w-10 h-10 flex-shrink-0 rounded-full mr-4 cursor-pointer transition-all duration-300 relative"
+          class="w-10 h-10 flex-shrink-0 rounded-full mr-4 cursor-pointer transition-all border-1 duration-300 relative"
           :style="{ backgroundColor: color.hex }"
-          :class="selectedColor === color.id ? 'ring-3 ring-offset-2 ring-offset-primary-600 shadow-md p-3' : 'opacity-80'"
+          :class="selectedColor === color.id ? 'border-primary-600  border-1  p-3' : 'opacity-70'"
           @click="$emit('update-color', color.id)"
         >
           <i v-if="selectedColor === color.id" :class="color.name.toLowerCase() === 'černá' ? 'text-white' : '' " class="pi pi-check absolute top-50% transform -translate-x-1/2 -translate-y-1/2 text-1.2rem   left-50% m-auto" />
@@ -159,7 +184,26 @@ const formattedReviews = computed(() => {
         </div>
       </div>
     </div>
-
+    <div>
+      <div class="text-lg font-medium text-surface-900 mb-1">
+        Varianta
+      </div>
+      <div class="flex items-center mb-8 flex-wrap gap-2">
+        <div
+          v-for="variant in variants"
+          :key="variant.id"
+          class="h-10 min-w-100px text-surface-900 inline-flex justify-center items-center flex-shrink-0 rounded-md cursor-pointer hover:bg-primary-500 hover:font-600 duration-250 transition-colors"
+          :class="[
+            selectedVariant === variant.id
+              ? 'border-primary-600 bg-primary-500 border-1 text-primary font-600 '
+              : 'border border-surface-300',
+          ]"
+          @click="$emit('update-variant', variant.id)"
+        >
+          {{ variant.label }}
+        </div>
+      </div>
+    </div>
     <!-- Výběr velikosti -->
     <div>
       <div class="text-lg font-medium text-surface-900 mb-1">
@@ -169,10 +213,10 @@ const formattedReviews = computed(() => {
         <div
           v-for="size in sizes"
           :key="size.id"
-          class="h-10 w-10 sm:h-12 sm:w-12 text-surface-900 inline-flex justify-center items-center flex-shrink-0 rounded-md cursor-pointer hover:bg-surface-100 duration-150 transition-colors"
+          class="h-10 w-10 sm:h-12 sm:w-12 text-surface-900 inline-flex justify-center items-center flex-shrink-0 rounded-md cursor-pointer hover:bg-primary-500 hover:font-600 duration-250 transition-colors"
           :class="[
             selectedSize === size.id
-              ? 'border-primary-600 bg-primary-500 border-2 shadow-md text-primary font-800 '
+              ? 'border-primary-600 bg-primary-500 border-1 text-primary font-600 '
               : 'border border-surface-300',
           ]"
           @click="$emit('update-size', size.id)"

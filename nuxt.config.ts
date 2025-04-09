@@ -33,6 +33,8 @@ export default defineNuxtConfig({
     'nuxt-nodemailer',
     '@nuxt/scripts',
     'nuxt-headlessui',
+    /*     '@formkit/auto-animate/nuxt',
+ */ '@vueuse/motion/nuxt',
 
   ],
   ssr: false,
