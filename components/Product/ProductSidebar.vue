@@ -176,7 +176,11 @@ const formattedReviews = computed(() => {
           :class="selectedColor === color.id ? 'border-primary-600  border-1  p-3' : 'opacity-70'"
           @click="$emit('update-color', color.id)"
         >
-          <i v-if="selectedColor === color.id" :class="color.name.toLowerCase() === 'černá' ? 'text-white' : '' " class="pi pi-check absolute top-50% transform -translate-x-1/2 -translate-y-1/2 text-1.2rem   left-50% m-auto" />
+          <i
+            v-if="selectedColor === color.id"
+            :class="color.name?.toLowerCase?.() === 'černá' ? 'text-white' : ''"
+            class="pi pi-check absolute top-50% transform -translate-x-1/2 -translate-y-1/2 text-1.2rem left-50% m-auto"
+          />
 
           <!--  <span v-if="selectedColor === color.id" class="absolute top-7 left-1/2 transform -translate-x-1/2 text-sm whitespace-nowrap">
             {{ color.name }}

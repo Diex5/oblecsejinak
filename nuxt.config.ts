@@ -51,10 +51,7 @@ export default defineNuxtConfig({
     '@unocss/reset/tailwind.css',
     'primeicons/primeicons.css',
   ],
-  /* colorMode: {
-    classSuffix: '',
-    preference: 'light',
-  }, */
+
   runtimeConfig: {
 
     public: {
@@ -85,8 +82,9 @@ export default defineNuxtConfig({
       },
     },
   },
+
   hub: {
-    database: true,
+    database: false,
     dir: '.data/hub',
     bindings: {
       compatibilityFlags: ['nodejs_compat_v2'],
@@ -97,6 +95,11 @@ export default defineNuxtConfig({
       target: 'esnext',
     },
   },
+  /* colorMode: {
+    classSuffix: '',
+    preference: 'light',
+  }, */
+
   eslint: {
     config: {
       stylistic: true,

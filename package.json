@@ -13,7 +13,7 @@
     "typecheck": "nuxt typecheck --no-emit",
     "cleanup": "nuxt cleanup && pnpm dedupe",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "tsx server/database/migrate.ts"
+    "db:migrate": "pnpm run db:generate && pnpm run db:push"
   },
   "dependencies": {
     "@nuxthub/core": "0.8.17",
@@ -25,6 +25,8 @@
     "drizzle-orm": "^0.39.3",
     "i": "^0.3.7",
     "nuxt": "^3.15.0",
+    "pg": "^8.14.1",
+    "postgres": "^3.4.5",
     "primeicons": "^7.0.0",
     "primevue": "^4.2.5",
     "unenv": "^1.10.0",

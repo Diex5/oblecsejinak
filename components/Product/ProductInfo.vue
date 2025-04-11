@@ -1,43 +1,26 @@
-<script setup>
-defineProps({
-  name: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  features: {
-    type: Array,
-    required: true,
-  },
-  tabs: {
-    type: Array,
-    required: true,
-  },
-  benefits: {
-    type: Array,
-    required: true,
-  },
-})
+<script setup lang=ts>
+import type { Product } from '~/types'
+
+const props = defineProps<{
+  product: Product
+}>()
 </script>
 
 <template>
   <div class="flex-1">
     <!-- Název produktu -->
     <h1 v-motion-fade-visible-once class="text-4xl dark:text-red-500 lg:text-6xl font-semibold text-surface-900 font-oswald tracking-wide">
-      {{ name }}
+      {{ product.name }}
     </h1>
 
     <!-- Popis produktu -->
     <p v-motion-fade-visible-once class="mt-6 text-xl font-medium text-surface-800 leading-relaxed">
-      {{ description }}
+      {{ product.description }}
     </p>
 
     <!-- Seznam vlastností -->
     <div class="md:mt-8 mt-6 text-xl">
-      <ul class="ml-5 list-disc flex flex-col gap-4 font-sans font-600 ">
+      <!-- <ul class="ml-5 list-disc flex flex-col gap-4 font-sans font-600 ">
         <li
           v-for="(feature, index) in features"
           :key="index"
@@ -46,7 +29,7 @@ defineProps({
         >
           {{ feature }}
         </li>
-      </ul>
+      </ul> -->
     </div>
 
     <!-- Záložky s informacemi -->
@@ -54,21 +37,21 @@ defineProps({
       <Tabs v-motion-fade-visible-once value="0" bg-transparent>
         <TabList class="bg-transparent border-b border-surface-200 font-600 font-oswald ">
           <Tab
-            v-for="tab in tabs"
-            :key="tab.id"
-            :value="tab.id"
+            v-for="tab in product.tabs.filter((tab) => tab.type === true)"
+            :key="tab._id"
+            :value="tab._id"
             class="px-6 py-3 font-medium text-xl"
           >
-            {{ tab.label }}
+            {{ tab.title }}
           </Tab>
         </TabList>
         <TabPanels class="!px-0 bg-transparent  pt-6">
           <TabPanel
-            v-for="tab in tabs"
-            :key="tab.id"
-            :value="tab.id"
+            v-for="tab in product.tabs.filter((tab) => tab.type === true)"
+            :key="tab._id"
+            :value="tab._id"
           >
-            <p class="m-0 text-xl  leading-relaxed text-surface-700" v-html="tab.content" />
+            <span v-for="item in tab.content" :key="item" v-html="item.html" />
           </TabPanel>
         </TabPanels>
       </Tabs>
