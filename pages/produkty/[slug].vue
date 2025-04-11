@@ -57,11 +57,12 @@ const enter = ref({
 </script>
 
 <template>
-  <div v-if="product">
-    {{ product }}
-    <div class="container px-6 mx-auto">
-      <!-- Breadcrumb -->
-      <div v-motion-fade-visible-once class="py-4 mb-8 ">
+  <div>
+    <div v-if="product">
+      {{ product }}
+      <div class="container px-6 mx-auto">
+        <!-- Breadcrumb -->
+        <div v-motion-fade-visible-once class="py-4 mb-8 ">
         <!--    <Breadcrumb :home="home" :model="items">
           <template #item="{ item, props }">
             <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
@@ -77,16 +78,16 @@ const enter = ref({
             <i class="pi pi-chevron-right !text-xl !leading-none text-surface-400" />
           </template>
         </Breadcrumb> -->
-      </div>
+        </div>
 
-      <!-- Galerie produktu -->
-      <!--  <ProductGallery
+        <!-- Galerie produktu -->
+        <!--  <ProductGallery
         v-motion
         :initial="initial"
         :enter="enter" :product="rawProduct"
       /> -->
 
-      <div ref="mainSection" class="v-motion-fade-visible mt-16 flex items-start gap-1rem md:gap-6rem lg:flex-row flex-col">
+        <div ref="mainSection" class="v-motion-fade-visible mt-16 flex items-start gap-1rem md:gap-6rem lg:flex-row flex-col">
         <!-- Informace o produktu -->
         <!--  <ProductInfo
           :product="rawProduct"
@@ -117,12 +118,12 @@ const enter = ref({
           @update-size="updateSize"
           @update-variant="updateVariant"
         /> -->
-      </div>
+        </div>
 
       <!-- Accordion -->
-    </div>
+      </div>
 
-    <!--   <ProductStickyBar
+      <!--   <ProductStickyBar
       :product="product"
       :show-bar="showBar"
       :selected-size="selectedSize"
@@ -133,11 +134,15 @@ const enter = ref({
       @increment-count="incrementCount"
       @decrement-count="decrementCount"
     /> -->
-    <div class="mt-16">
-      <TestimonialSlideGradient />
-    </div>
+      <div class="mt-16">
+        <TestimonialSlideGradient />
+      </div>
     <!--  <div container class="mt-16">
       <ProductAccordion :items="product.accordion" />
     </div> -->
+    </div>
+    <div v-else>
+      Neni zadnej produkt
+    </div>
   </div>
 </template>
