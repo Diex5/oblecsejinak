@@ -1,98 +1,30 @@
-<script setup>
+<script setup lang=ts>
 import { computed } from 'vue'
 import Button from 'primevue/button'
+import type { ProductWithVariants } from '~/server/database/schema'
 
-const props = defineProps({
-  price: {
-    type: Number,
-    required: true,
-  },
-  originalPrice: {
-    type: Number,
-    default: null,
-  },
-  rating: {
-    type: Number,
-    required: true,
-  },
-  reviews: {
-    type: Number,
-    required: true,
-  },
-  viewers: {
-    type: Number,
-    required: true,
-  },
-  colors: {
-    type: Array,
-    required: true,
-  },
-  sizes: {
-    type: Array,
-    required: true,
-  },
-  stock: {
-    type: String,
-    default: 'medium', // 'low', 'medium', 'high'
-  },
-  count: {
-    type: Number,
-    required: true,
-  },
-  selectedColor: {
-    type: String,
-    required: true,
-  },
-  selectedSize: {
-    type: String,
-    required: true,
-  },
-  selectedVariant: {
-    type: String,
-    required: true,
-  },
-  benefits: {
-    type: Array,
-    required: true,
-  },
-  recommendation: {
-    type: Object,
-    required: true,
-  },
-  videoThumbnail: {
-    type: String,
-    required: true,
-  },
-  variants: {
-    type: Array,
-    required: true,
-  },
-  formatPrice: {
-    type: Function,
-    required: true,
-  },
-})
+const props = defineProps<{
+  product: ProductWithVariants
+  colors: { id: number, name: string, hex: string, available: boolean }[]
+  sizes: { id: number, label: string, available: boolean }[]
+}>()
 
 const emit = defineEmits(['increment-count', 'decrement-count', 'update-color', 'update-size', 'update-variant'])
 
+const { selectedColorId, selectedSizeId, isInStock, currentVariant } = storeToRefs(useProduct())
+
 const { addToCart } = useCart()
 // Výpočet počtu hvězdiček
-const fullStars = computed(() => Math.floor(props.rating))
+/* const fullStars = computed(() => Math.floor(props.rating))
 const hasHalfStar = computed(() => props.rating % 1 >= 0.5)
 const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 : 0))
+ */
 
 // Zaokrouhlené hodnocení pro zobrazení
-const formattedRating = computed(() => props.rating.toFixed(1))
+/* const formattedRating = computed(() => props.rating.toFixed(1)) */
 
-const selectedCity = ref()
-const cities = ref([
-  { name: 'Pánské', code: 'NY' },
-  { name: 'Ženské', code: 'RM' },
-  { name: 'Dětské', code: 'LDN' },
-
-])
 // FOMO zprávy pro nízký stav zásob
-const stockMessage = computed(() => {
+/* const stockMessage = computed(() => {
   if (props.stock === 'low') {
     return { icon: 'pi pi-exclamation', message: 'Zbývá posledních pár kusů!' }
   }
@@ -100,12 +32,12 @@ const stockMessage = computed(() => {
     return { icon: 'pi pi-clock', message: 'Dostatek kusů skladem' }
   }
   return null
-})
+}) */
 
 // Formátování počtu recenzí
-const formattedReviews = computed(() => {
+/* const formattedReviews = computed(() => {
   return new Intl.NumberFormat('cs-CZ').format(props.reviews)
-})
+}) */
 </script>
 
 <template>
@@ -123,7 +55,7 @@ const formattedReviews = computed(() => {
         <div class="absolute inset-0 bg-red-400 rounded-full blur-sm opacity-50 duration-50 delay-1200  animate-ping z-0" />
       </div>
       <i class="pi pi-users !text-xl !leading-none mr-4 text-primary" />
-      <span class="text-base font-medium"><b>{{ viewers }} lidí</b> si právě prohlíží tento produkt.</span>
+    <!--   <span class="text-base font-medium"><b>{{ viewers }} lidí</b> si právě prohlíží tento produkt.</span> -->
     </div>
 
     <!-- Video náhled -->
@@ -133,15 +65,15 @@ const formattedReviews = computed(() => {
           <i class="pi pi-play text-lg text-surface-900 ml-0.5" />
         </div>
       </div> -->
-      <img
+      <!--  <img
         class="absolute top-0 left-0 w-full h-full object-cover"
         :src="videoThumbnail"
         alt="Video náhled produktu"
-      >
+      > -->
     </div>
 
     <!-- Cena -->
-    <div class="flex items-center gap-3 mt-2">
+    <!--  <div class="flex items-center gap-3 mt-2">
       <div v-if="originalPrice && originalPrice > price" class="text-xl text-red-600  line-through">
         {{ formatPrice(originalPrice) }}
       </div>
@@ -149,9 +81,9 @@ const formattedReviews = computed(() => {
         {{ formatPrice(price) }}
       </div>
     </div>
-
+ -->
     <!-- Hodnocení -->
-    <div class="flex items-center gap-3">
+    <!-- <div class="flex items-center gap-3">
       <div class="flex items-center gap-1">
         <i v-for="n in fullStars" :key="`full-${n}`" class="pi pi-star-fill !text-xl !leading-none text-amber-500" />
         <i v-if="hasHalfStar" class="pi pi-star-fill !text-xl !leading-none text-amber-500 opacity-70" />
@@ -161,34 +93,10 @@ const formattedReviews = computed(() => {
         {{ formattedReviews }} recenzí
       </div>
     </div>
-
+ -->
     <!-- Výběr barvy -->
-    <div class="mt-3">
-      <div class="text-lg font-medium text-surface-900 mb-1">
-        Barva
-      </div>
-      <div class="flex items-center mb-4">
-        <div
-          v-for="color in colors"
-          :key="color.id"
-          class="w-10 h-10 flex-shrink-0 rounded-full mr-4 cursor-pointer transition-all border-1 duration-300 relative"
-          :style="{ backgroundColor: color.hex }"
-          :class="selectedColor === color.id ? 'border-primary-600  border-1  p-3' : 'opacity-70'"
-          @click="$emit('update-color', color.id)"
-        >
-          <i
-            v-if="selectedColor === color.id"
-            :class="color.name?.toLowerCase?.() === 'černá' ? 'text-white' : ''"
-            class="pi pi-check absolute top-50% transform -translate-x-1/2 -translate-y-1/2 text-1.2rem left-50% m-auto"
-          />
 
-          <!--  <span v-if="selectedColor === color.id" class="absolute top-7 left-1/2 transform -translate-x-1/2 text-sm whitespace-nowrap">
-            {{ color.name }}
-          </span> -->
-        </div>
-      </div>
-    </div>
-    <div>
+    <!-- <div>
       <div class="text-lg font-medium text-surface-900 mb-1">
         Varianta
       </div>
@@ -207,37 +115,18 @@ const formattedReviews = computed(() => {
           {{ variant.label }}
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- Výběr velikosti -->
-    <div>
-      <div class="text-lg font-medium text-surface-900 mb-1">
-        Velikost
-      </div>
-      <div class="flex items-center mb-8 flex-wrap gap-2">
-        <div
-          v-for="size in sizes"
-          :key="size.id"
-          class="h-10 w-10 sm:h-12 sm:w-12 text-surface-900 inline-flex justify-center items-center flex-shrink-0 rounded-md cursor-pointer hover:bg-primary-500 hover:font-600 duration-250 transition-colors"
-          :class="[
-            selectedSize === size.id
-              ? 'border-primary-600 bg-primary-500 border-1 text-primary font-600 '
-              : 'border border-surface-300',
-          ]"
-          @click="$emit('update-size', size.id)"
-        >
-          {{ size.label }}
-        </div>
-      </div>
-    </div>
+    <ProductVariantSelector :row="true" :colors="colors" :sizes="sizes" />
 
     <!-- Upozornění na dostupnost -->
-    <div v-if="stockMessage" class="bg-yellow-100 text-yellow-900 text-base inline-flex items-center px-4 py-2 font-medium mb-6 rounded-lg">
+    <!-- <div v-if="stockMessage" class="bg-yellow-100 text-yellow-900 text-base inline-flex items-center px-4 py-2 font-medium mb-6 rounded-lg">
       <i :class="stockMessage.icon" class="mr-2" />
       <span>{{ stockMessage.message }}</span>
-    </div>
+    </div> -->
 
     <!-- Počítadlo množství -->
-    <div class="w-full rounded-full border border-surface-200 p-3 flex gap-3 mb-4">
+    <!--  <div class="w-full rounded-full border border-surface-200 p-3 flex gap-3 mb-4">
       <button
         class="hover:bg-surface-200 text-surface-900 w-10 h-10 flex items-center justify-center border border-surface-200 rounded-full"
         :disabled="count <= 1"
@@ -255,7 +144,7 @@ const formattedReviews = computed(() => {
       >
         <i class="pi pi-plus text-lg" />
       </button>
-    </div>
+    </div> -->
 
     <!-- Tlačítko pro přidání do košíku -->
     <div w-full>
@@ -270,7 +159,7 @@ const formattedReviews = computed(() => {
     </div>
 
     <!-- Doporučení -->
-    <div class="bg-surface-50 rounded-lg p-4 mb-6 mt-4 shadow-sm">
+    <!--  <div class="bg-surface-50 rounded-lg p-4 mb-6 mt-4 shadow-sm">
       <div class="text-surface-900 text-xl font-medium mb-6">
         Doporučujeme k produktu
       </div>
@@ -291,12 +180,12 @@ const formattedReviews = computed(() => {
         </div>
         <Button class="ml-auto !rounded-full" outlined icon="pi pi-plus !text-xl !leading-none" />
       </div>
-    </div>
+    </div> -->
 
     <!-- Seznam benefitů -->
     <ul class="list-none w-full flex flex-col items-center justify-center text-lg p-0 m-0 font-medium text-surface-600 bg-surface-50 rounded-lg py-6 shadow-sm">
       <li
-        v-for="(benefit, index) in benefits"
+        v-for="(benefit, index) in product.benefits"
         :key="index"
         class="flex items-center mb-4 last:mb-0"
       >

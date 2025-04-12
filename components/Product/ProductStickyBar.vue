@@ -1,14 +1,17 @@
 <script setup lang="ts">
-const props = defineProps<{
-  product: any
-  showBar: boolean
-  selectedSize?: string
-  selectedColor?: string
-  count: number
+import type { ProductWithVariants } from '~/server/database/schema'
 
+const props = defineProps<{
+  product: ProductWithVariants
+  colors: { id: number, name: string, hex: string, available: boolean }[]
+  sizes: { id: number, label: string, available: boolean }[]
+  showBar: boolean
 }>()
+
 const emit = defineEmits(['increment-count', 'decrement-count', 'update-color', 'update-size'])
 const { addToCart } = useCart()
+
+const { selectedColorId, selectedSizeId, isInStock, currentVariant } = storeToRefs(useProduct())
 
 const visible = ref(false)
 
@@ -26,36 +29,8 @@ const addToCartMobile = (variant: any) => {
       'opacity-0 translate-y-12 pointer-events-none': !showBar,
     }"
   >
-    <div class="md:flex hidden md:justify-center items-center  flex-wrap gap-2">
-      <div
-        v-for="size in product.sizes"
-        :key="size.id"
-        class="h-10 w-10 sm:h-12 sm:w-12 text-surface-900 inline-flex justify-center items-center flex-shrink-0 rounded-md cursor-pointer hover:bg-surface-100 duration-150 transition-colors"
-        :class="[
-          selectedSize === size.id
-            ? 'border-primary-600 bg-primary-500 border-2 shadow-md text-primary font-800 '
-            : 'border border-surface-300',
-        ]"
-        @click="$emit('update-size', size.id)"
-      >
-        {{ size.label }}
-      </div>
-    </div>
-    <div class="md:flex hidden items-center ">
-      <div
-        v-for="color in product.colors"
-        :key="color.id"
-        class="w-10 h-10  flex-shrink-0 rounded-full mr-4 cursor-pointer transition-all duration-300 relative"
-        :style="{ backgroundColor: color.hex }"
-        :class="selectedColor === color.id ? 'ring-3 ring-offset-2 ring-offset-primary-600 shadow-md p-3' : 'opacity-80'"
-        @click="$emit('update-color', color.id)"
-      >
-        <i v-if="selectedColor === color.id" :class="color.name.toLowerCase() === 'černá' ? 'text-white' : '' " class="pi pi-check absolute top-50% transform -translate-x-1/2 -translate-y-1/2 text-1.2rem   left-50% m-auto" />
-
-        <!--  <span v-if="selectedColor === color.id" class="absolute top-7 left-1/2 transform -translate-x-1/2 text-sm whitespace-nowrap">
-            {{ color.name }}
-          </span> -->
-      </div>
+    <div md:block hidden>
+      <ProductVariantSelector :row="false" :colors="colors" :sizes="sizes" />
     </div>
     <div w="md:30% full">
       <div md:flex hidden>
@@ -79,45 +54,8 @@ const addToCartMobile = (variant: any) => {
         />
       </div>
       <Dialog v-model:visible="visible" class="md:hidden! block!" modal header="" :style="{ width: '25rem' }">
-        <div class="mt-3">
-          <div class="text-lg font-medium text-surface-900 mb-1">
-            Barva
-          </div>
-          <div class="flex items-center mb-4">
-            <div
-              v-for="color in product.colors"
-              :key="color.id"
-              class="w-10 h-10 flex-shrink-0 rounded-full mr-4 cursor-pointer transition-all duration-300 relative"
-              :style="{ backgroundColor: color.hex }"
-              :class="selectedColor === color.id ? 'ring-3 ring-offset-2 ring-offset-primary-600 shadow-md p-3' : 'opacity-80'"
-              @click="$emit('update-color', color.id)"
-            >
-              <i v-if="selectedColor === color.id" :class="color.name.toLowerCase() === 'černá' ? 'text-white' : '' " class="pi pi-check absolute top-50% transform -translate-x-1/2 -translate-y-1/2 text-1.2rem   left-50% m-auto" />
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <div class="text-lg font-medium text-surface-900 mb-1">
-            Velikost
-          </div>
-          <div class="flex items-center mb-8 flex-wrap gap-2">
-            <div
-              v-for="size in product.sizes"
-              :key="size.id"
-              class="h-10 w-10 sm:h-12 sm:w-12 text-surface-900 inline-flex justify-center items-center flex-shrink-0 rounded-md cursor-pointer hover:bg-surface-100 duration-150 transition-colors"
-              :class="[
-                selectedSize === size.id
-                  ? 'border-primary-600 bg-primary-500 border-2 shadow-md text-primary font-800 '
-                  : 'border border-surface-300',
-              ]"
-              @click="$emit('update-size', size.id)"
-            >
-              {{ size.label }}
-            </div>
-          </div>
-        </div>
-        <div class="w-full rounded-full border border-surface-200 p-3 flex gap-3 mb-4">
+        <ProductVariantSelector :row="true" :colors="colors" :sizes="sizes" mb-12 />
+        <!--  <div class="w-full rounded-full border border-surface-200 p-3 flex gap-3 mb-4">
           <button
             class="hover:bg-surface-200 text-surface-900 w-10 h-10 flex items-center justify-center border border-surface-200 rounded-full"
             :disabled="count <= 1"
@@ -135,7 +73,7 @@ const addToCartMobile = (variant: any) => {
           >
             <i class="pi pi-plus text-lg" />
           </button>
-        </div>
+        </div> -->
 
         <!-- Tlačítko pro přidání do košíku -->
         <div w-full>

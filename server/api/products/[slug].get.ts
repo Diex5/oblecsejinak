@@ -19,6 +19,11 @@ export default defineEventHandler(async event => {
             size: true,
           },
         },
+        tabs: true,
+        accordions: true,
+        features: true,
+        benefits: true,
+
       },
     })
     return product

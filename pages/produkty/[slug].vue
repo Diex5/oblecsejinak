@@ -4,9 +4,9 @@ import { useIntersectionObserver, useWindowSize } from '@vueuse/core'
 const { fetchProduct } = useProduct()
 const slug = useRoute().params.slug as string
 
-const { product } = storeToRefs(useProduct())
-onMounted(() => {
-  fetchProduct(slug)
+const { product, availableColorsForSelectedSize, availableSizesForSelectedColor } = storeToRefs(useProduct())
+onMounted(async () => {
+  await fetchProduct(slug)
 })
 
 // Breadcrumb
@@ -16,10 +16,10 @@ const home = ref({
   route: '/',
 })
 
-/* const items = computed(() => [
+const items = computed(() => [
   { label: 'Produkty', route: '/produkty' },
-  { label: rawProduct.value?.name || 'Produkt' },
-]) */
+  { label: product.value.name || 'Produkt' },
+])
 
 // Zbytek vaší původní logiky pro sticky bar a animace
 const mainSection = ref(null)
@@ -59,25 +59,24 @@ const enter = ref({
 <template>
   <div>
     <div v-if="product">
-      {{ product }}
       <div class="container px-6 mx-auto">
         <!-- Breadcrumb -->
         <div v-motion-fade-visible-once class="py-4 mb-8 ">
-        <!--    <Breadcrumb :home="home" :model="items">
-          <template #item="{ item, props }">
-            <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
-              <a :href="href" v-bind="props.action" @click="navigate">
-                <span class="font-medium text-primary hover:underline px-4 whitespace-nowrap text-base">{{ item.label }}</span>
+          <Breadcrumb :home="home" :model="items">
+            <template #item="{ item, props }">
+              <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
+                <a :href="href" v-bind="props.action" @click="navigate">
+                  <span class="font-medium text-primary hover:underline px-4 whitespace-nowrap text-base">{{ item.label }}</span>
+                </a>
+              </router-link>
+              <a v-else :href="item.url" :target="item.target" v-bind="props.action">
+                <span class="text-surface-700 px-4 whitespace-nowrap text-base">{{ item.label }}</span>
               </a>
-            </router-link>
-            <a v-else :href="item.url" :target="item.target" v-bind="props.action">
-              <span class="text-surface-700 px-4 whitespace-nowrap text-base">{{ item.label }}</span>
-            </a>
-          </template>
-          <template #separator>
-            <i class="pi pi-chevron-right !text-xl !leading-none text-surface-400" />
-          </template>
-        </Breadcrumb> -->
+            </template>
+            <template #separator>
+              <i class="pi pi-chevron-right !text-xl !leading-none text-surface-400" />
+            </template>
+          </Breadcrumb>
         </div>
 
         <!-- Galerie produktu -->
@@ -88,52 +87,28 @@ const enter = ref({
       /> -->
 
         <div ref="mainSection" class="v-motion-fade-visible mt-16 flex items-start gap-1rem md:gap-6rem lg:flex-row flex-col">
-        <!-- Informace o produktu -->
-        <!--  <ProductInfo
-          :product="rawProduct"
-        /> -->
+          <!-- Informace o produktu -->
+          <ProductInfo
+            :product="product"
+          />
 
-        <!-- Sidebar s nákupními informacemi -->
-        <!-- <ProductSidebar
-          :price="product.price"
-          :original-price="product.originalPrice"
-          :rating="product.rating"
-          :reviews="product.reviews"
-          :viewers="product.viewers"
-          :colors="product.colors"
-          :sizes="product.sizes"
-          :variants="product.variants"
-          :stock="product.stock"
-          :count="count"
-          :selected-color="selectedColor"
-          :selected-size="selectedSize"
-          :selected-variant="selectedVariant"
-          :benefits="product.benefits"
-          :recommendation="product.recommendation"
-          :video-thumbnail="product.videoThumbnail"
-          :format-price="formatPrice"
-          @increment-count="incrementCount"
-          @decrement-count="decrementCount"
-          @update-color="updateColor"
-          @update-size="updateSize"
-          @update-variant="updateVariant"
-        /> -->
+          <!-- Sidebar s nákupními informacemi -->
+          <ProductSidebar
+            :product="product"
+            :colors="availableColorsForSelectedSize"
+            :sizes="availableSizesForSelectedColor"
+          />
         </div>
 
       <!-- Accordion -->
       </div>
 
-      <!--   <ProductStickyBar
-      :product="product"
-      :show-bar="showBar"
-      :selected-size="selectedSize"
-      :selected-color="selectedColor"
-      :count="count"
-      @update-color="updateColor"
-      @update-size="updateSize"
-      @increment-count="incrementCount"
-      @decrement-count="decrementCount"
-    /> -->
+      <ProductStickyBar
+        :product="product"
+        :show-bar="showBar"
+        :colors="availableColorsForSelectedSize"
+        :sizes="availableSizesForSelectedColor"
+      />
       <div class="mt-16">
         <TestimonialSlideGradient />
       </div>
