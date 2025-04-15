@@ -1,5 +1,4 @@
 <script setup lang=ts>
-import { computed } from 'vue'
 import Button from 'primevue/button'
 import type { ProductWithVariants } from '~/server/database/schema'
 
@@ -11,10 +10,15 @@ const props = defineProps<{
 
 const emit = defineEmits(['increment-count', 'decrement-count', 'update-color', 'update-size', 'update-variant'])
 
-const { selectedColorId, selectedSizeId, isInStock, currentVariant } = storeToRefs(useProduct())
+const { selectedColorId, selectedSizeId, isInStock, price, currentVariant, quantity } = storeToRefs(useProduct())
+const { clearCart, totalItems, addToCart } = useCart()
+const { cartItems } = storeToRefs(useCart())
 
-const { addToCart } = useCart()
-// Výpočet počtu hvězdiček
+onMounted(() => {
+  // Získání varianty produktu
+  clearCart()
+})
+const date = new Date().toISOString()
 /* const fullStars = computed(() => Math.floor(props.rating))
 const hasHalfStar = computed(() => props.rating % 1 >= 0.5)
 const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 : 0))
@@ -71,17 +75,23 @@ const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 :
         alt="Video náhled produktu"
       > -->
     </div>
-
-    <!-- Cena -->
-    <!--  <div class="flex items-center gap-3 mt-2">
-      <div v-if="originalPrice && originalPrice > price" class="text-xl text-red-600  line-through">
-        {{ formatPrice(originalPrice) }}
+    <!-- <Test /> -->
+    <div class="flex items-center gap-3 mt-2">
+      <div v-if="product.discount && date >= product.discount_start && date <= product.discount_end">
+        <div class="text-xl text-red-600  line-through">
+          {{ formatPrice(currentVariant?.price) }}
+        </div>
+        <div class="text-4xl lg:text-5xl text-primary font-semibold">
+          {{ formatPrice(discountedPrice(currentVariant?.price, product.discount)) }}
+        </div>
       </div>
-      <div class="text-4xl lg:text-5xl text-primary font-semibold">
-        {{ formatPrice(price) }}
+      <div v-else>
+        <div class="text-4xl lg:text-5xl text-primary font-semibold">
+          {{ formatPrice(currentVariant?.price || product.base_price) }}
+        </div>
       </div>
     </div>
- -->
+
     <!-- Hodnocení -->
     <!-- <div class="flex items-center gap-3">
       <div class="flex items-center gap-1">
@@ -96,54 +106,12 @@ const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 :
  -->
     <!-- Výběr barvy -->
 
-    <!-- <div>
-      <div class="text-lg font-medium text-surface-900 mb-1">
-        Varianta
-      </div>
-      <div class="flex items-center mb-8 flex-wrap gap-2">
-        <div
-          v-for="variant in variants"
-          :key="variant.id"
-          class="h-10 min-w-100px text-surface-900 inline-flex justify-center items-center flex-shrink-0 rounded-md cursor-pointer hover:bg-primary-500 hover:font-600 duration-250 transition-colors"
-          :class="[
-            selectedVariant === variant.id
-              ? 'border-primary-600 bg-primary-500 border-1 text-primary font-600 '
-              : 'border border-surface-300',
-          ]"
-          @click="$emit('update-variant', variant.id)"
-        >
-          {{ variant.label }}
-        </div>
-      </div>
-    </div> -->
-    <!-- Výběr velikosti -->
     <ProductVariantSelector :row="true" :colors="colors" :sizes="sizes" />
 
     <!-- Upozornění na dostupnost -->
     <!-- <div v-if="stockMessage" class="bg-yellow-100 text-yellow-900 text-base inline-flex items-center px-4 py-2 font-medium mb-6 rounded-lg">
       <i :class="stockMessage.icon" class="mr-2" />
       <span>{{ stockMessage.message }}</span>
-    </div> -->
-
-    <!-- Počítadlo množství -->
-    <!--  <div class="w-full rounded-full border border-surface-200 p-3 flex gap-3 mb-4">
-      <button
-        class="hover:bg-surface-200 text-surface-900 w-10 h-10 flex items-center justify-center border border-surface-200 rounded-full"
-        :disabled="count <= 1"
-        :class="{ 'opacity-50 cursor-not-allowed': count <= 1 }"
-        @click="$emit('decrement-count')"
-      >
-        <i class="pi pi-minus text-lg" />
-      </button>
-      <div class="flex-1 text-center border border-surface-200 rounded-full flex items-center justify-center text-surface-900 font-medium text-lg">
-        {{ count }}
-      </div>
-      <button
-        class="hover:bg-surface-200 text-surface-900 w-10 h-10 flex items-center justify-center border border-surface-200 rounded-full"
-        @click="$emit('increment-count')"
-      >
-        <i class="pi pi-plus text-lg" />
-      </button>
     </div> -->
 
     <!-- Tlačítko pro přidání do košíku -->
@@ -154,8 +122,9 @@ const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 :
         class="!text-2rem !py-4 font-oswald! !duration-450 !font-medium !text-black" bg-primary-400
         icon="pi pi-cart-plus !text-1.8rem"
         label="Přidat do košíku"
-        @click="addToCart({ product, variant: { colorId: 2, sizeId: 3, price: 997 } })"
+        @click="addToCart(product, currentVariant, price, quantity)"
       />
+      {{ currentVariant }}{{ currentVariant.size_id }}
     </div>
 
     <!-- Doporučení -->
@@ -183,7 +152,7 @@ const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 :
     </div> -->
 
     <!-- Seznam benefitů -->
-    <ul class="list-none w-full flex flex-col items-center justify-center text-lg p-0 m-0 font-medium text-surface-600 bg-surface-50 rounded-lg py-6 shadow-sm">
+    <!-- <ul class="list-none w-full flex flex-col items-center justify-center text-lg p-0 m-0 font-medium text-surface-600 bg-surface-50 rounded-lg py-6 shadow-sm">
       <li
         v-for="(benefit, index) in product.benefits"
         :key="index"
@@ -192,6 +161,6 @@ const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 :
         <i :class="benefit.icon" class="mr-3 text-primary" />
         <span>{{ benefit.text }}</span>
       </li>
-    </ul>
+    </ul> -->
   </div>
 </template>

@@ -4,6 +4,7 @@ export const useProduct = defineStore('product', () => {
   const product = ref<ProductWithVariants>() || null
   const selectedColorId = ref()
   const selectedSizeId = ref()
+  const quantity = ref(1)
 
   async function fetchProduct (slug: string) {
     const { data, error } = await useFetch<ProductWithVariants>(`/api/products/${slug}`)
@@ -100,7 +101,29 @@ export const useProduct = defineStore('product', () => {
 
   // Aktuální cena z vybrané varianty
   const price = computed(() => {
-    return currentVariant.value?.price || product.value?.base_price || 0
+    // 1. Získání aktuální ceny (varianta > základní cena > 0 jako fallback)
+    const currentPrice = currentVariant.value?.price ?? product.value?.base_price ?? 0
+
+    // 2. Kontrola, zda je sleva platná
+    if (!product.value?.discount || product.value.discount <= 0) {
+      return currentPrice // žádná sleva
+    }
+
+    // 3. Kontrola časového rozmezí slevy
+    try {
+      const currentDate = new Date().toISOString()
+
+      // Pokud je aktuální datum v rozmezí slevy
+      if (currentDate >= product.value.discount_start && currentDate <= product.value.discount_end) {
+        return currentPrice - (currentPrice * product.value.discount) / 100
+      }
+    }
+    catch (e) {
+      console.error('Chyba při parsování data slevy:', e)
+    }
+
+    // 4. Výchozí případ - vrátit cenu bez slevy
+    return currentPrice
   })
 
   return {
@@ -108,6 +131,8 @@ export const useProduct = defineStore('product', () => {
     selectedColorId,
     selectedSizeId,
     sizes,
+    price,
+    quantity,
     currentVariant,
     availableSizesForSelectedColor,
     availableColorsForSelectedSize,

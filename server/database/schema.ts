@@ -24,6 +24,10 @@ export const products = pgTable('products', {
   description: text('description'),
   base_price: decimal('base_price', { precision: 10, scale: 2 }), // Základní cena
   images: jsonb('images').$type<string[]>(), // Obrázky produktu
+  discount: integer('discount').default(0), // Sleva
+  /* discount_type: text('discount_type').default('percent'), */ // Typ slevy (procento nebo částka)
+  discount_start: timestamp('discount_start'), // Začátek slevy
+  discount_end: timestamp('discount_end'), // Konec slevy
   created_at: timestamp('created_at').defaultNow(),
 })
 

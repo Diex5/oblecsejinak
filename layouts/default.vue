@@ -5,14 +5,10 @@
   <div font-sans>
     <Navigation />
     <NuxtLoadingIndicator />
-    <ClientOnly>
-      <template #fallback>
-        <SpaLoading />
-      </template>
-      <div>
-        <slot />
-      </div>
-    </ClientOnly>
+    <div>
+      <Toast />
+      <slot />
+    </div>
 
     <!--  <Footer /> -->
   </div>

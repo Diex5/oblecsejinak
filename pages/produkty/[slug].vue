@@ -4,7 +4,7 @@ import { useIntersectionObserver, useWindowSize } from '@vueuse/core'
 const { fetchProduct } = useProduct()
 const slug = useRoute().params.slug as string
 
-const { product, availableColorsForSelectedSize, availableSizesForSelectedColor } = storeToRefs(useProduct())
+const { product, availableColorsForSelectedSize, availableSizesForSelectedColor, currentVariant, isInStock, quantity } = storeToRefs(useProduct())
 onMounted(async () => {
   await fetchProduct(slug)
 })
@@ -80,11 +80,11 @@ const enter = ref({
         </div>
 
         <!-- Galerie produktu -->
-        <!--  <ProductGallery
-        v-motion
-        :initial="initial"
-        :enter="enter" :product="rawProduct"
-      /> -->
+        <!-- <ProductGallery
+          v-motion
+          :initial="initial"
+          :enter="enter" :product="rawProduct"
+        /> -->
 
         <div ref="mainSection" class="v-motion-fade-visible mt-16 flex items-start gap-1rem md:gap-6rem lg:flex-row flex-col">
           <!-- Informace o produktu -->
@@ -99,6 +99,8 @@ const enter = ref({
             :sizes="availableSizesForSelectedColor"
           />
         </div>
+
+        <!-- Stav skladu -->
 
       <!-- Accordion -->
       </div>

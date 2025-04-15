@@ -8,15 +8,9 @@ useHead({
 </script>
 
 <template>
-  <ClientOnly>
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
-
-    <template #fallback>
-      <SpaLoading />
-    </template>
-  </ClientOnly>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
 </template>
 
 <style>
