@@ -82,7 +82,7 @@ export const useCheckoutStore = defineStore('checkout', () => {
   const validateStep = async () => {
     if (currentStep.value === 1) {
       const fields = ['firstName', 'lastName', 'email', 'phone']
-      const results = await Promise.all(fields.map(field => validateField(field)))
+      const results = await Promise.all(fields.map(field => validateField(field as keyof typeof values)))
       const isValid = results.every(r => r.valid)
       if (isValid) currentStep.value = 2
       return isValid
@@ -90,7 +90,7 @@ export const useCheckoutStore = defineStore('checkout', () => {
 
     if (currentStep.value === 2) {
       const fields = ['street', 'city', 'zip', 'country', 'shippingMethod']
-      const results = await Promise.all(fields.map(field => validateField(field)))
+      const results = await Promise.all(fields.map(field => validateField(field as keyof typeof values)))
       const isValid = results.every(r => r.valid)
       return isValid
     }

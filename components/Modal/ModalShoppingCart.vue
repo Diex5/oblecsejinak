@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { storeToRefs } from 'pinia'
 
-const { totalItems, removeItem, updateQuantity, clearCart, addToCart, toggleCart } = useCart()
-const { cartItems, isCartOpened, totalPrice } = storeToRefs(useCart())
+const { totalItems, removeItem, updateQuantity, clearCart, addToCart, removeDiscount, toggleCart } = useCart()
+const { cartItems, isCartOpened, totalPrice, discount } = storeToRefs(useCart())
 
 const reversedCartItems = computed(() => [...cartItems.value].reverse())
 
@@ -113,8 +113,15 @@ const qtn = ref()
                     </div>
 
                     <!-- Patička s cenou a tlačítky -->
-                    <div class="border-t border-gray-200 px-4 py-6 sm:px-6">
-                      <CouponComponent />
+                    <div v-auto-animate class="border-t border-gray-200 px-4 py-6 sm:px-6">
+                      <CouponComponent v-if="!discount.isActive" />
+
+                      <div v-if="discount.isActive" class="flex justify-between text-base font-medium text-gray-900 mb-2">
+                        <p>Kupón: <b bg-primary-100 px-2 text-base rounded-md> {{ discount.name }}</b><UnoIcon class="pi pi-times hover:text-red-500 text-base ml-2 transition-all duration-250 cursor-pointer mr-4" aria-hidden="true" @click="removeDiscount()" /></p>
+                        <p text-red-600 font-bold>
+                          -{{ formatPrice(discount.discountedAmount) }}
+                        </p>
+                      </div>
                       <div class="flex justify-between text-base font-medium text-gray-900">
                         <p>Mezisoučet</p>
                         <p>{{ formatPrice(totalPrice) }}</p>

@@ -6,7 +6,7 @@ const hoveredItem = ref(null)
 const selectedItem = ref(null)
 
 const activeItem = computed(() => hoveredItem.value || selectedItem.value)
-
+const { toggleCart } = useCart()
 const setActiveItem = item => {
   if (item?.subMenu) {
     hoveredItem.value = item
@@ -212,9 +212,10 @@ const navigationFooter = ref([
           severity="secondary"
         />
         <Button
-          icon="pi pi-cart-plus" text
-          class="text-surface-900 dark:text-surface-0 [&>.p-button-icon]:!text-xl [&>.p-button-icon]:!leading-none"
+          icon="pi pi-cart-plus"
+          text class="text-surface-900 dark:text-surface-0 [&>.p-button-icon]:!text-xl [&>.p-button-icon]:!leading-none"
           severity="secondary"
+          @click="toggleCart()"
         />
       </div>
     </div>

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-const { totalItems, removeItem, updateQuantity, removeDiscount } = useCart()
+const { totalItems, removeItem, removeDiscount } = useCart()
 const { cartItems, totalPrice, discount } = storeToRefs(useCart())
 
-const { currentStep, values, onlyActiveUpsells, meta, isSubmitting, totalOrderPrice } = storeToRefs(useCheckoutStore())
+const { currentStep, values, onlyActiveUpsells, isSubmitting, totalOrderPrice } = storeToRefs(useCheckoutStore())
 
 const reversedCartItems = computed(() => [...cartItems.value].reverse())
 </script>

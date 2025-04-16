@@ -34,8 +34,8 @@ onMounted(() => {
         <span class="text-surface-900 text-2xl block font-medium mb-6">
           <UnoIcon class="pi pi-envelope text-xl mr-4" aria-hidden="true" />Contact Information
         </span>
-        <div flex md:flex-row gap-4 flex-col mb-4>
-          <div class="flex items-start flex-col gap-1 ">
+        <div flex md:flex-row gap-4 flex-col mb-4 w-full>
+          <div class="flex items-start flex-col gap-1 w-full">
             <label for="name" class="font-semibold md:w-34">Křestní jméno</label>
             <Field v-slot="{ field }" type="text" name="firstName">
               <IconField w-full>
@@ -47,7 +47,7 @@ onMounted(() => {
             <ErrorMessage text-orange-500 name="firstName" />
           </div>
 
-          <div class="flex items-start flex-col gap-1 ">
+          <div class="flex items-start flex-col gap-1 w-full ">
             <label for="lastname" class="font-semibold md:w-34">Příjmení</label>
             <Field v-slot="{ field }" type="text" name="lastName">
               <IconField w-full>
