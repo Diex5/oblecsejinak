@@ -22,10 +22,26 @@ export interface CartItem {
   } | null
   image?: string
 }
+interface Discount {
+  code: string
+  name: string
+  value: number // Procentuální sleva (např. 20 pro 20%)
+  isActive: boolean // Stav, zda je sleva aktivní
+  discountedAmount: number // Jaká částka byla odečtena
 
+}
 export const useCart = defineStore('cart', () => {
   const toast = useToast()
   const [isCartOpened, toggleCart] = useToggle()
+
+  const discount = useLocalStorage<Discount>('discount', {
+    code: '',
+    name: '',
+    value: 0,
+    isActive: false,
+    discountedAmount: 0, // Inicializace s nulovou hodnotou pro sleva
+
+  })
 
   // Použití useLocalStorage pro ukládání košíku
   const cartItems = useLocalStorage<CartItem[]>('cart-items', [])
@@ -111,13 +127,44 @@ export const useCart = defineStore('cart', () => {
   // Vyprázdnění košíku
   function clearCart () {
     cartItems.value = []
+    removeDiscount ()
   }
 
+  function applyDiscount (code: string, name: string, value: number) {
+    const subtotal = cartItems.value.reduce((total, item) => total + item.price * item.quantity, 0)
+    const discountedAmount = (subtotal * value) / 100
+
+    if (code === 'SALE10') {
+      discount.value = {
+        code,
+        name,
+        value,
+        isActive: true,
+        discountedAmount, // Spočítáme a uložíme částku slevy
+      }
+      toast.add({ severity: 'success', summary: 'Sleva aplikována', detail: 'Sleva 10 % byla úspěšně aplikována.', life: 3000 })
+    }
+    else {
+      toast.add({ severity: 'error', summary: 'Neplatný kód', detail: 'Zadaný kód není platný.', life: 3000 })
+    }
+  }
+
+  // Funkce pro odebrání slevy
+  function removeDiscount () {
+    discount.value = {
+      code: '',
+      name: '',
+      value: 0,
+      isActive: false,
+      discountedAmount: 0, // Resetujeme hodnotu slevy
+    }
+    toast.add({ severity: 'success', summary: 'Sleva byla odebrána !', detail: '', life: 3000 })
+  }
   // Výpočet celkové ceny košíku
   const totalPrice = computed(() => {
-    return cartItems.value.reduce((total, item) => {
-      return total + (item.price * item.quantity)
-    }, 0)
+    const subtotal = cartItems.value.reduce((total, item) => total + item.price * item.quantity, 0)
+    const discountAmount = (discount.value.isActive) ? (subtotal * discount.value.value) / 100 : 0
+    return subtotal - discountAmount
   })
 
   // Výpočet celkového počtu položek v košíku
@@ -132,9 +179,12 @@ export const useCart = defineStore('cart', () => {
     addToCart,
     isCartOpened,
     removeItem,
+    discount,
     updateQuantity,
     clearCart,
+    applyDiscount,
     toggleCart,
+    removeDiscount,
     totalPrice,
     totalItems,
   }
