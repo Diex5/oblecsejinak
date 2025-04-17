@@ -34,12 +34,12 @@ export const useStripeStore = defineStore('stripe', () => {
     uuid: '123-abc',
   }
 
-  async function loadStripeElements () {
+  async function loadStripeElements (userData: { name: string, email: string }, amount: number) {
     if (stripe.value) {
       // Vytvořte čistý objekt bez reaktivity
       const requestBody = {
-        amount: 31,
-        userData,
+        amount: amount,
+        userData: { name: userData.name, email: userData.email },
         currency: 'czk',
       }
 

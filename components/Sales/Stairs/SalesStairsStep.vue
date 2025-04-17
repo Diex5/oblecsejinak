@@ -47,12 +47,12 @@ const props = defineProps<SalesStepProps>()
 
       <!-- Cena - výraznější design -->
       <div v-if="price !== undefined || discountedPrice !== undefined" class="mb-6 p-3 bg-white rounded-lg shadow-inner border-2 border-primary-100">
-        <div v-if="discountedPrice !== undefined && discountedPrice !== null" class="text-base line-through text-gray-500 mb-1">
+        <div v-if="discountedPrice !== undefined && discountedPrice !== null" class="text-lg line-through text-gray-500 mb-1">
           Původní cena: {{ formatPrice(price ?? 0) }}
         </div>
-        <div class="text-2xl font-black" :class="{ 'text-red-600': discountedPrice !== undefined && discountedPrice !== null }">
+        <div class="text-3xl font-black" :class="{ 'text-red-600': discountedPrice !== undefined && discountedPrice !== null }">
           {{ formatPrice(discountedPrice !== undefined && discountedPrice !== null ? discountedPrice : price || 0) }}
-          <span v-if="discountedPrice" class="block text-sm font-normal text-green-600 mt-1">
+          <span v-if="discountedPrice" class="block text-lg font-normal text-green-600 mt-1">
             UŠETŘÍTE {{ formatPrice(price! - discountedPrice) }}!
           </span>
         </div>
@@ -71,7 +71,7 @@ const props = defineProps<SalesStepProps>()
         class="w-full py-3 text-lg font-bold rounded-xl bg-green-500 hover:to-green-300 transition-all shadow-lg hover:shadow-xl transform hover:scale-105"
         @click="emits('pay')"
       >
-        <span class="text-white drop-shadow-md">{{ ctaText }}</span>
+        <span class="text-white drop-shadow-md">{{ ctaText }} {{ formatPrice(discountedPrice !== undefined && discountedPrice !== null ? discountedPrice : price || 0) }}</span>
       </Button>
       <br>
       <span mt-4 class="text-gray-500 drop-shadow-md">(Kliknutím na tlačítko vám odečteme z karty  {{ formatPrice(discountedPrice !== undefined && discountedPrice !== null ? discountedPrice : price || 0) }}  )</span>

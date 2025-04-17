@@ -6,12 +6,7 @@ const { currentStep, values, onlyActiveUpsells, isSubmitting, totalOrderPrice } 
 
 const { loadStripeElements, loadStripe, handleSubmit } = useStripeStore()
 const { customerId, isLoading, stripe } = storeToRefs(useStripeStore())
-onMounted(async () => {
-  customerId.value = null
-  stripe.value = await loadStripe()
-
-  /* loadStripeElements() */
-})
+const { currentStep, values, errors, meta, isSubmitting, totalOrderPrice } = storeToRefs(useCheckoutStore())
 </script>
 
 <template>
@@ -24,7 +19,7 @@ onMounted(async () => {
         <div id="linkAuthenticationElement" />
 
         <div id="payment-element" w-full />
-        <Button id="load-elements" @click="loadStripeElements">
+        <Button id="load-elements" @click="loadStripeElements()">
           Load Payment Elements
         </Button>
         <Button id="submit" :disabled="isLoading" @click="handleSubmit">

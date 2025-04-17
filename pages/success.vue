@@ -26,9 +26,10 @@ const steps = [
     id: 1,
     title: '🎁 1. Startovní balíček radosti',
     description: `Každý začátek si zaslouží něco navíc. Přidej ke své objednávce dárkové balení s designovou krabičkou, samolepkou a malým překvapením uvnitř. Ideální, když to chceš dát jako dárek – nebo si jen udělat radost.`,
-    ctaText: 'Přidat balíček radosti za 129 Kč',
+    ctaText: `Přidat balíček radosti za `,
     fomoText: 'Jen dnes! Platí pro prvních 20 objednávek.',
-    amount: 129,
+    amount: 629,
+    discountedAmount: 387,
     imageUrl: 'https://cdn.leonardo.ai/users/522075df-9aa6-4010-a4cc-9c8e1578895b/generations/23c7f214-e87f-49fd-bc6e-48b064713afa/segments/2:4:1/Flux_Schnell_create_a_beautiful_ceramic_cup_with_a_vibrant_cir_1.jpg',
     next: 2,
   },
@@ -38,7 +39,7 @@ const steps = [
     description: `Nabízíme exkluzivní potisk na hrníček "Nejlepší táta na světě" nebo "Maminka roku". Perfektní jako milý dárek. Limitovaná edice – a skvěle se hodí k objednanému produktu.`,
     ctaText: 'Přidat hrníček za 199 Kč',
     amount: 199,
-    imageUrl: 'https://cdn.leonardo.ai/users/522075df-9aa6-4010-a4cc-9c8e1578895b/generations/23c7f214-e87f-49fd-bc6e-48b064713afa/segments/2:4:1/Flux_Schnell_create_a_beautiful_ceramic_cup_with_a_vibrant_cir_1.jpg',
+    imageUrl: 'https://cdn.leonardo.ai/users/522075df-9aa6-4010-a4cc-9c8e1578895b/generations/23c7f214-e87f-49fd-bc6e-48b064713afa/segments/3:4:1/Flux_Schnell_create_a_beautiful_ceramic_cup_with_a_vibrant_cir_2.jpg',
 
     next: 3,
   },
@@ -58,32 +59,11 @@ const steps = [
     description: `Chceš, aby tvé nové oblečení vydrželo? Přidáme ti přírodní EKO prací sáček a návod, jak se starat o potisk tak, aby nezmizel ani po 40 praních.`,
     ctaText: 'Přidat péči za 99 Kč',
     amount: 99,
-    imageUrl: 'https://cdn.leonardo.ai/users/522075df-9aa6-4010-a4cc-9c8e1578895b/generations/23c7f214-e87f-49fd-bc6e-48b064713afa/segments/2:4:1/Flux_Schnell_create_a_beautiful_ceramic_cup_with_a_vibrant_cir_1.jpg',
+    imageUrl: 'https://cdn.leonardo.ai/users/522075df-9aa6-4010-a4cc-9c8e1578895b/generations/23c7f214-e87f-49fd-bc6e-48b064713afa/segments/3:4:1/Flux_Schnell_create_a_beautiful_ceramic_cup_with_a_vibrant_cir_2.jpg',
 
     next: 5,
   },
-  {
-    id: 5,
-    title: '🎨 5. Vlastní design – jen pro tebe',
-    description: `Chceš naprosto originální produkt? Pošli nám motiv, text, hlášku nebo fotku – vytvoříme ti tričko nebo hrnek přesně podle tvého návrhu. Odlišíš se. A budeš mít něco, co nikdo jiný nemá.`,
-    ctaText: 'Chci vlastní design za 299 Kč',
-    amount: 299,
-    discountedAmount: 99,
-    imageUrl: 'https://cdn.leonardo.ai/users/522075df-9aa6-4010-a4cc-9c8e1578895b/generations/23c7f214-e87f-49fd-bc6e-48b064713afa/segments/2:4:1/Flux_Schnell_create_a_beautiful_ceramic_cup_with_a_vibrant_cir_1.jpg',
 
-    next: 6,
-  },
-  {
-    id: 6,
-    title: '🎉 BONUS: Tajemný dárek navíc!',
-    description: `Přidáš-li všechny předchozí kroky, odemkneš si dárek zdarma – náhodný produkt z naší tajné zásoby. Může to být cokoliv: ponožky, placka, další hrnek, extra tričko... Neprozradíme. Ale potěší.`,
-    ctaText: 'Odemknout dárek ZDARMA',
-    amount: 0,
-    fomoText: 'Jen pro ty, kdo prošli celým schodištěm!',
-    imageUrl: 'https://cdn.leonardo.ai/users/522075df-9aa6-4010-a4cc-9c8e1578895b/generations/23c7f214-e87f-49fd-bc6e-48b064713afa/segments/2:4:1/Flux_Schnell_create_a_beautiful_ceramic_cup_with_a_vibrant_cir_1.jpg',
-
-    next: null,
-  },
 ]
 
 const currentStep = useLocalStorage('currentStep', 0)

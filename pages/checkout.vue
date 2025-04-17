@@ -5,14 +5,18 @@ import { useSessionStorage } from '@vueuse/core'
 const { totalItems } = useCart()
 const { totalPrice } = storeToRefs(useCart())
 
-const { currentStep, values, errors, meta, isSubmitting } = storeToRefs(useCheckoutStore())
+const { currentStep, values, errors, meta, isSubmitting, totalOrderPrice } = storeToRefs(useCheckoutStore())
 const { resetForm, handleSubmit, setFieldValue, validateStep, goToPreviousStep } = useCheckoutStore()
+const { loadStripeElements, loadStripe } = useStripeStore()
+const { stripe, customerId } = storeToRefs(useStripeStore())
 
 onMounted(async () => {
   if (!totalItems || !totalPrice || totalPrice <= 0) {
     navigateTo('/')
   }
   useSessionStorage('status', '')
+  customerId.value = null
+  stripe.value = await loadStripe()
 })
 watch(totalPrice, newValue => {
   if (!totalItems || newValue <= 0) {
@@ -28,9 +32,16 @@ const scrollToSection = () => {
   })
 }
 
-function validateUser () {
+async function validateUser () {
   scrollToSection()
   validateStep()
+  isSubmitting.value = true
+  const userData = {
+    name: `${values.value.firstName} ${values.value.lastName}`,
+    email: values.value.email,
+  }
+  console.log(userData)
+  await loadStripeElements(userData, totalOrderPrice.value)
 }
 </script>
 
@@ -70,10 +81,10 @@ function validateUser () {
           </li>
         </ul>
         <div v-auto-animate min-h-800px>
-          <div v-if="currentStep === 1">
+          <div v-show="currentStep === 1">
             <CheckoutUserInformation />
           </div>
-          <div v-if="currentStep === 2">
+          <div v-show="currentStep === 2">
             <CheckoutPaymet />
           </div>
         </div>
