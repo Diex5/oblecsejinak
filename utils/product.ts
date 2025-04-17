@@ -9,3 +9,6 @@ export function formatPrice (price: number) {
 export function discountedPrice (price: number, discount: number) {
   return price - (price * discount) / 100
 }
+export function toPlain<T> (obj: T): T {
+  return JSON.parse(JSON.stringify(obj))
+}

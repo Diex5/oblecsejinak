@@ -151,7 +151,7 @@ export default defineNuxtConfig({
     },
     client: {
       key: process.env.STRIPE_PUBLIC_KEY,
-
+      manualClientLoad: true,
       options: {},
     },
   },

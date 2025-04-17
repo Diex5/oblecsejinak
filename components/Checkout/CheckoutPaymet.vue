@@ -4,8 +4,12 @@ const { cartItems, totalPrice, discount } = storeToRefs(useCart())
 
 const { currentStep, values, onlyActiveUpsells, isSubmitting, totalOrderPrice } = storeToRefs(useCheckoutStore()) */
 
-const { setPaymentInfo, loadStripeElements } = useStripeStore()
-const { customerId, isLoading } = storeToRefs(useStripeStore())
+const { setPaymentInfo, loadStripeElements, loadStripe } = useStripeStore()
+const { customerId, isLoading, stripe } = storeToRefs(useStripeStore())
+onMounted(async () => {
+  stripe.value = await loadStripe()
+  /* loadStripeElements() */
+})
 </script>
 
 <template>
@@ -19,7 +23,7 @@ const { customerId, isLoading } = storeToRefs(useStripeStore())
 
         <div id="payment-element" w-full />
         <Button id="load-elements" @click="loadStripeElements">
-          Load Payment Elements
+          Load Payment Elements {{ customerId }}
         </Button>
         <Button id="submit" :disabled="isLoading">
           Pay now
