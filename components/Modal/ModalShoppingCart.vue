@@ -130,9 +130,9 @@ const qtn = ref()
                         Doprava a daně budou vypočítány při pokladně.
                       </p>
                       <div class="mt-6">
-                        <I18nLink to="/pokladna">
+                        <NuxtLink to="/checkout">
                           <Button v-ripple variant="primary" class="w-full bg-primary-500 text-gray-700" label="Přejít k pokladně" size="large" />
-                        </I18nLink>
+                        </NuxtLink>
                       </div>
                       <div class="mt-6 flex justify-center text-center text-sm text-gray-500 w-full">
                         <p class="w-full flex flex-col gap-[4px]">

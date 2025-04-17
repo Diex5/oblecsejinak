@@ -1,4 +1,6 @@
 <script setup lang=ts>
+import VueScrollTo from 'vue-scrollto'
+
 const value = ref(null)
 
 const { totalItems } = useCart()
@@ -17,6 +19,20 @@ watch(totalPrice, newValue => {
     navigateTo('/')
   }
 })
+const targetSection = ref(null)
+const scrollToSection = () => {
+  // Nastavení pomalého scrollu
+  VueScrollTo.scrollTo('#targetSection', 1000, {
+    easing: 'ease-in-out',
+    offset: 0,
+    cancelable: true,
+  })
+}
+
+function validateUser () {
+  scrollToSection()
+  validateStep()
+}
 </script>
 
 <template>
@@ -25,7 +41,7 @@ watch(totalPrice, newValue => {
       w-full md:flex-row flex-col flex justify-center rounded-md items-center md:justify-between p-2 mb-2rem bg-black
       text-white class="[&>div>i]:text-primary-400!"
     >
-      <div text-base font-500 flex gap-1 items-center>
+      <div id="targetSection" text-base font-500 flex gap-1 items-center>
         <i class="pi pi-check-circle" />
         30denní záruka vrácení peněz
       </div>
@@ -54,7 +70,7 @@ watch(totalPrice, newValue => {
             Payment
           </li>
         </ul>
-        <div v-auto-animate>
+        <div v-auto-animate min-h-800px>
           <div v-if="currentStep === 1">
             <CheckoutUserInformation />
           </div>
@@ -84,7 +100,8 @@ watch(totalPrice, newValue => {
           </div>
         </div>
         <div class=" flex flex-col lg:flex-row justify-center items-center lg:justify-end mt-12">
-          <Button v-ripple size="large" class="w-full  bg-primary-500 text-gray-700" :loading="isSubmitting" :disabled="!meta.valid || isSubmitting" label="Přejít k platbě" @click="validateStep()" />
+          <Button v-ripple size="large" class="w-full  bg-primary-500 text-gray-700" :loading="isSubmitting" :disabled="!meta.valid || isSubmitting" label="Přejít k platbě" @click="validateUser()" />
+          <Button v-ripple size="large" class="w-full  bg-primary-500 text-gray-700" :loading="isSubmitting" label="zpet" @click="currentStep = 1" />
           {{ currentStep }}
         </div>
       </div>

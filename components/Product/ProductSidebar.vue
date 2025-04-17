@@ -14,10 +14,10 @@ const { selectedColorId, selectedSizeId, isInStock, price, currentVariant, quant
 const { clearCart, totalItems, addToCart } = useCart()
 const { cartItems } = storeToRefs(useCart())
 
-onMounted(() => {
+/* onMounted(() => {
   // Získání varianty produktu
   clearCart()
-})
+}) */
 const date = new Date().toISOString()
 /* const fullStars = computed(() => Math.floor(props.rating))
 const hasHalfStar = computed(() => props.rating % 1 >= 0.5)

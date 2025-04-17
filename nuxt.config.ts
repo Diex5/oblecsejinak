@@ -35,6 +35,7 @@ export default defineNuxtConfig({
     'nuxt-headlessui',
     '@formkit/auto-animate/nuxt',
     '@vueuse/motion/nuxt',
+    '@unlok-co/nuxt-stripe',
 
   ],
   ssr: false,
@@ -130,7 +131,6 @@ export default defineNuxtConfig({
       },
     },
   },
-  target: 'static',
   /* nodemailer: {
     from: '"ostom.cz" <dev@mail.develit.io>',
     host: 'smtp.seznam.cz',
@@ -142,7 +142,7 @@ export default defineNuxtConfig({
     },
   }, */
 
-  /*  stripe: {
+  stripe: {
     server: {
       key: process.env.STRIPE_SECRET_KEY,
       options: {
@@ -154,6 +154,7 @@ export default defineNuxtConfig({
 
       options: {},
     },
-  }, */
+  },
+  target: 'static',
 
 })
