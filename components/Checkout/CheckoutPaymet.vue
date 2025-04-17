@@ -10,7 +10,7 @@ const { currentStep, values, errors, meta, isSubmitting, totalOrderPrice } = sto
 </script>
 
 <template>
-  <div class="col-span-12 lg:col-span-6">
+  <div class="col-span-12 lg:col-span-6 min-h-400px">
     <div class="p-6 bg-white shadow-md rounded-md">
       <h2 class="text-xl font-bold mb-4">
         Platební údaje {{ customerId }}
@@ -19,12 +19,6 @@ const { currentStep, values, errors, meta, isSubmitting, totalOrderPrice } = sto
         <div id="linkAuthenticationElement" />
 
         <div id="payment-element" w-full />
-        <Button id="load-elements" @click="loadStripeElements()">
-          Load Payment Elements
-        </Button>
-        <Button id="submit" :disabled="isLoading" @click="handleSubmit">
-          Pay now
-        </Button>
       </form>
     </div>
   </div>

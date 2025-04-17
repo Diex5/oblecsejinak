@@ -21,7 +21,7 @@ const reversedCartItems = computed(() => [...cartItems.value].reverse())
             <div class="flex items-center justify-between ">
               <span class="text-primary font-medium">{{ cart.name }}</span>
               <span class="text-surface-900  font-medium">{{ formatPrice(cart.price * cart.quantity) }}</span>
-              <a class="cursor-pointer text-primary hover:text-primary-emphasis transition-colors duration-300" @click="removeItem(cart.productId, cart.variantId)"><i class="pi pi-trash !text-xs !leading-none" /></a>
+              <a v-if="currentStep === 1" class="cursor-pointer text-primary hover:text-primary-emphasis transition-colors duration-300" @click="removeItem(cart.productId, cart.variantId)"><i class="pi pi-trash !text-xs !leading-none" /></a>
             </div>
             <div flex items-center gap-2>
               <div w-3 h-3 rounded-full :style="{ backgroundColor: cart.color.hex_code }" />
@@ -32,13 +32,13 @@ const reversedCartItems = computed(() => [...cartItems.value].reverse())
         </div>
       </li>
     </ul>
-    <div class="py-2 mt-4 border-b border-surface">
+    <div v-if="currentStep === 1" class="py-2 mt-4 border-b border-surface">
       <CouponComponent />
     </div>
 
     <div v-auto-animate md:sticky top-0 left-0 w-full class="py-2 my-4 text-lg">
       <div v-if="discount.isActive" class="flex items-center justify-between border-b-dotted border-b-2">
-        <span class="text-surface-900  font-medium py-1 ">Kupón: <b bg-primary-100 px-2 text-base rounded-md> {{ discount.name }}</b><UnoIcon class="pi pi-times hover:text-red-500 text-base ml-2 transition-all duration-250 cursor-pointer mr-4" aria-hidden="true" @click="removeDiscount()" /></span>
+        <span class="text-surface-900  font-medium py-1 ">Kupón: <b bg-primary-100 px-2 text-base rounded-md> {{ discount.name }}</b><UnoIcon v-if="currentStep === 1" class="pi pi-times hover:text-red-500 text-base ml-2 transition-all duration-250 cursor-pointer mr-4" aria-hidden="true" @click="removeDiscount()" /></span>
         <span class="text-surface-900 text-red-600 font-bold">-{{ formatPrice(discount.discountedAmount) }} </span>
       </div>
       <div class="flex items-center justify-between border-b-dotted border-b-2">
@@ -60,7 +60,7 @@ const reversedCartItems = computed(() => [...cartItems.value].reverse())
         <span class="text-surface-900  font-medium text-xl">{{ formatPrice(totalOrderPrice) }}</span>
       </div>
     </div>
-    <div class="py-2 mt-4 gap-1rem bg-highlight flex items-center flex-col justify-center">
+    <div v-if="currentStep === 1" class="py-2 mt-4 gap-1rem bg-highlight flex items-center flex-col justify-center">
       <img src="https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images/blocks/ecommerce/checkoutform/checkoutform-1-3.png" class="mr-2" alt="Country Flag"><span
         class="text-highlight-contrast font-medium"
       >100% Garance vrácení peněz, bez otázek do 30 dnů</span>

@@ -7,8 +7,8 @@ const { totalPrice } = storeToRefs(useCart())
 
 const { currentStep, values, errors, meta, isSubmitting, totalOrderPrice } = storeToRefs(useCheckoutStore())
 const { resetForm, handleSubmit, setFieldValue, validateStep, goToPreviousStep } = useCheckoutStore()
-const { loadStripeElements, loadStripe } = useStripeStore()
-const { stripe, customerId } = storeToRefs(useStripeStore())
+const { loadStripeElements, loadStripe, handleSubmit: handlePayment } = useStripeStore()
+const { stripe, customerId, isLoading } = storeToRefs(useStripeStore())
 
 onMounted(async () => {
   if (!totalItems || !totalPrice || totalPrice <= 0) {
@@ -23,7 +23,7 @@ watch(totalPrice, newValue => {
     navigateTo('/')
   }
 })
-const scrollToSection = () => {
+const scrollToSection = async () => {
   // Nastavení pomalého scrollu
   VueScrollTo.scrollTo('#targetSection', 1000, {
     easing: 'ease-in-out',
@@ -33,15 +33,18 @@ const scrollToSection = () => {
 }
 
 async function validateUser () {
-  scrollToSection()
-  validateStep()
   isSubmitting.value = true
   const userData = {
     name: `${values.value.firstName} ${values.value.lastName}`,
     email: values.value.email,
   }
-  console.log(userData)
-  await loadStripeElements(userData, totalOrderPrice.value)
+  /* validateStep() */
+
+  loadStripeElements(userData, totalOrderPrice.value)
+  await setTimeout(async () => {
+    currentStep.value = 2
+    scrollToSection()
+  }, 1000)
 }
 </script>
 
@@ -80,18 +83,22 @@ async function validateUser () {
             Payment
           </li>
         </ul>
-        <div v-auto-animate min-h-800px>
-          <div v-show="currentStep === 1">
-            <CheckoutUserInformation />
+        <div md:min-h-800px>
+          <div v-auto-animate>
+            <div v-show="currentStep === 1">
+              <CheckoutUserInformation />
+            </div>
+            <div v-show="currentStep === 2">
+              <CheckoutPaymet />
+            </div>
           </div>
-          <div v-show="currentStep === 2">
-            <CheckoutPaymet />
+          <div class=" flex flex-col lg:flex-row gap-1rem justify-center items-center lg:justify-end mt-12">
+            <Button v-if="currentStep === 1" v-ripple size="large" class="w-full  bg-primary-500 text-gray-700" :loading="isSubmitting" :disabled="!meta.valid || isSubmitting" label="Přejít k platbě" @click="validateUser()" />
+            <Button v-if="currentStep === 2" v-ripple size="large" w-full variant="outlined" :loading="isLoading" label="zpet" @click="goToPreviousStep" />
+            <Button v-if="currentStep === 2" v-ripple size="large" class="w-full  bg-primary-500! text-gray-700" :disabled="isLoading" @click="handlePayment">
+              Zaplatit
+            </Button>
           </div>
-        </div>
-        <div class=" flex flex-col lg:flex-row justify-center items-center lg:justify-end mt-12">
-          <Button v-ripple size="large" class="w-full  bg-primary-500 text-gray-700" :loading="isSubmitting" :disabled="!meta.valid || isSubmitting" label="Přejít k platbě" @click="validateUser()" />
-          <Button v-ripple size="large" class="w-full  bg-primary-500 text-gray-700" :loading="isSubmitting" label="zpet" @click="currentStep = 1" />
-          {{ currentStep }}
         </div>
       </div>
       <CheckoutSummary />
