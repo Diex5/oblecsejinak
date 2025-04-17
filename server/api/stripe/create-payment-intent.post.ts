@@ -6,7 +6,6 @@ export default defineEventHandler(async event => {
   const body = await readBody(event)
   const userData = body.userData
   const amount = body.amount
-  const orderAmount = 1400
 
   console.log(body)
   if (!userData || !userData.email || !userData.name) {
@@ -23,7 +22,6 @@ export default defineEventHandler(async event => {
       error: 'Invalid amount',
     }
   }
-  console.log(amount)
   try {
     const customer = await stripe.customers.create({
       email: userData.email,
@@ -46,7 +44,7 @@ export default defineEventHandler(async event => {
       }, */
       setup_future_usage: 'off_session', // Pro uložení karty
     })
-
+    console.log(customer.id)
     return {
       clientSecret: paymentIntent.client_secret,
       customerId: customer.id,

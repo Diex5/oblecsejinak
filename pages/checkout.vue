@@ -1,7 +1,6 @@
 <script setup lang=ts>
 import VueScrollTo from 'vue-scrollto'
-
-const value = ref(null)
+import { useSessionStorage } from '@vueuse/core'
 
 const { totalItems } = useCart()
 const { totalPrice } = storeToRefs(useCart())
@@ -9,17 +8,17 @@ const { totalPrice } = storeToRefs(useCart())
 const { currentStep, values, errors, meta, isSubmitting } = storeToRefs(useCheckoutStore())
 const { resetForm, handleSubmit, setFieldValue, validateStep, goToPreviousStep } = useCheckoutStore()
 
-onMounted(() => {
+onMounted(async () => {
   if (!totalItems || !totalPrice || totalPrice <= 0) {
     navigateTo('/')
   }
+  useSessionStorage('status', '')
 })
 watch(totalPrice, newValue => {
   if (!totalItems || newValue <= 0) {
     navigateTo('/')
   }
 })
-const targetSection = ref(null)
 const scrollToSection = () => {
   // Nastavení pomalého scrollu
   VueScrollTo.scrollTo('#targetSection', 1000, {
@@ -72,32 +71,10 @@ function validateUser () {
         </ul>
         <div v-auto-animate min-h-800px>
           <div v-if="currentStep === 1">
-            <!-- <CheckoutUserInformation /> -->
-            <CheckoutPaymet />
+            <CheckoutUserInformation />
           </div>
           <div v-if="currentStep === 2">
-            <div class="col-span-12 lg:col-span-6">
-              <div class="p-6 bg-white shadow-md rounded-md">
-                <h2 class="text-xl font-bold mb-4">
-                  Platební údaje
-                </h2>
-                <div class="mb-4">
-                  <label for="cardNumber" class="block text-sm font-medium text-gray-700">Číslo karty</label>
-                  <InputText id="cardNumber" class="w-full mt-1" placeholder="1234 1234 1234 1234" />
-                </div>
-                <div class="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label for="expiryDate" class="block text-sm font-medium text-gray-700">Platnost</label>
-                    <InputText id="expiryDate" class="w-full mt-1" placeholder="MM/RR" />
-                  </div>
-                  <div>
-                    <label for="cvc" class="block text-sm font-medium text-gray-700">CVC</label>
-                    <InputText id="cvc" class="w-full mt-1" placeholder="123" />
-                  </div>
-                </div>
-                <Button label="Zaplatit" class="w-full bg-primary-500 text-white" />
-              </div>
-            </div>
+            <CheckoutPaymet />
           </div>
         </div>
         <div class=" flex flex-col lg:flex-row justify-center items-center lg:justify-end mt-12">

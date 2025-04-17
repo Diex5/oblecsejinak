@@ -1,9 +1,10 @@
-import { useStorage } from '@vueuse/core'
+import { useStorage, useSessionStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import type { StripeIntentResponse } from '~/types/stripe'
 
 export const useStripeStore = defineStore('stripe', () => {
   const customerId = useStorage('customerId', '')
+  const status = useSessionStorage('status', '')
   const paymentMethodId = useStorage('paymentMethodId', '')
   const toast = useToast()
 
@@ -11,7 +12,6 @@ export const useStripeStore = defineStore('stripe', () => {
 
   const { stripe, loadStripe } = useClientStripe()
   const errors = ref<string[]>([])
-  const paymentElement = ref<HTMLElement | null>(null)
   const elements = ref<any>(null)
 
   useAsyncData(async () => {
@@ -53,10 +53,7 @@ export const useStripeStore = defineStore('stripe', () => {
         return
       }
 
-      if (customerId.value) { // použijte .value pro přístup k hodnotě
-        customerId.value = ''
-        console.log('Customer ID:', customerId.value)
-      }
+      customerId.value = response.customerId
 
       elements.value = stripe.value.elements({
         clientSecret: response.clientSecret as string,
@@ -85,7 +82,7 @@ export const useStripeStore = defineStore('stripe', () => {
           ? error.message
           : 'An unexpected error occurred.'
 
-        errors.value.push(errorMessage)
+        errors.value.push(errorMessage as string)
         toast.add({
           severity: 'error',
           summary: 'Chyba',
@@ -94,11 +91,10 @@ export const useStripeStore = defineStore('stripe', () => {
         })
         return
       }
-
+      console.log('PaymentIntent:', paymentIntent)
       if (paymentIntent) {
-        // Uložení do store (useStorage se postará o localStorage automaticky)
-        customerId.value = paymentIntent.customer || ''
         paymentMethodId.value = paymentIntent.payment_method || ''
+        status.value = 'success'
 
         toast.add({
           severity: 'success',
@@ -125,5 +121,5 @@ export const useStripeStore = defineStore('stripe', () => {
     }
   }
 
-  return { customerId, paymentMethodId, setPaymentInfo, loadStripeElements, stripe, loadStripe }
+  return { customerId, paymentMethodId, setPaymentInfo, loadStripeElements, stripe, loadStripe, handleSubmit }
 })

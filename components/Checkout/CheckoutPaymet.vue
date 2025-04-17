@@ -4,10 +4,12 @@ const { cartItems, totalPrice, discount } = storeToRefs(useCart())
 
 const { currentStep, values, onlyActiveUpsells, isSubmitting, totalOrderPrice } = storeToRefs(useCheckoutStore()) */
 
-const { setPaymentInfo, loadStripeElements, loadStripe } = useStripeStore()
+const { loadStripeElements, loadStripe, handleSubmit } = useStripeStore()
 const { customerId, isLoading, stripe } = storeToRefs(useStripeStore())
 onMounted(async () => {
+  customerId.value = null
   stripe.value = await loadStripe()
+
   /* loadStripeElements() */
 })
 </script>
@@ -16,16 +18,16 @@ onMounted(async () => {
   <div class="col-span-12 lg:col-span-6">
     <div class="p-6 bg-white shadow-md rounded-md">
       <h2 class="text-xl font-bold mb-4">
-        Platební údaje
+        Platební údaje {{ customerId }}
       </h2>
       <form id="payment-form" mx-auto>
         <div id="linkAuthenticationElement" />
 
         <div id="payment-element" w-full />
         <Button id="load-elements" @click="loadStripeElements">
-          Load Payment Elements {{ customerId }}
+          Load Payment Elements
         </Button>
-        <Button id="submit" :disabled="isLoading">
+        <Button id="submit" :disabled="isLoading" @click="handleSubmit">
           Pay now
         </Button>
       </form>
