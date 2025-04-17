@@ -72,7 +72,8 @@ function validateUser () {
         </ul>
         <div v-auto-animate min-h-800px>
           <div v-if="currentStep === 1">
-            <CheckoutUserInformation />
+            <!-- <CheckoutUserInformation /> -->
+            <CheckoutPaymet />
           </div>
           <div v-if="currentStep === 2">
             <div class="col-span-12 lg:col-span-6">
