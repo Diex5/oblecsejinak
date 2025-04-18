@@ -1,5 +1,5 @@
 // schema.ts
-import { pgTable, serial, jsonb, text, integer, decimal, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
+import { pgTable, serial, jsonb, text, integer, decimal, timestamp, uniqueIndex, boolean } from 'drizzle-orm/pg-core'
 import type { InferModel } from 'drizzle-orm'
 import { relations } from 'drizzle-orm'
 import type { Product } from '../../types/Productor'
@@ -132,8 +132,31 @@ export const orderItems = pgTable('order_items', {
 })
 // 4. Definice vztahů
 
+export const orderUpsells = pgTable('order_upsells', {
+  id: serial('id').primaryKey(),
+  order_id: integer('order_id').references(() => orders.id), // může být null pro nevázané upselly
+  step_id: integer('step_id').notNull(), // ID kroku v upsell flow
+  title: text('title').notNull(),
+  description: text('description').notNull(),
+  cta_text: text('cta_text'), // Call to action text
+  fomo_text: text('fomo_text'), // Text zvyšující naléhavost
+  amount: decimal('amount', { precision: 10, scale: 2 }).notNull(), // Původní cena
+  discounted_amount: decimal('discounted_amount', { precision: 10, scale: 2 }), // Snížená cena
+  image_url: text('image_url'),
+  next: integer('next'), // ID následujícího kroku
+  type: text('type').notNull().default('upsell'), // upsell, downsell, order
+  context: text('context').notNull().default('checkout'), // checkout, frontend, page
+  is_active: boolean('is_active').notNull().default(false), // zda je upsell aktivní
+  sort_order: integer('sort_order').default(0),
+  accepted: boolean('accepted').default(false), // zda byl upsell přijat
+  created_at: timestamp('created_at').defaultNow(),
+  updated_at: timestamp('updated_at').defaultNow(),
+})
+
 export const ordersRelations = relations(orders, ({ many }) => ({
   items: many(orderItems),
+  upsells: many(orderUpsells), // Přidání nové relace
+
 }))
 
 export const productsRelations = relations(products, ({ many }) => ({
@@ -201,6 +224,12 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
     references: [productVariants.id],
   }),
 }))
+export const orderUpsellsRelations = relations(orderUpsells, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderUpsells.order_id],
+    references: [orders.id],
+  }),
+}))
 
 export type Products = InferModel<typeof products>
 export type Variant = InferModel<typeof productVariants>
@@ -228,6 +257,9 @@ export type Order = InferModel<typeof orders>
 export type OrderItem = InferModel<typeof orderItems>
 
 // Typy pro vnořené objekty
+export type OrderUpsell = InferModel<typeof orderUpsells>
+
+// Aktualizovat typ OrderWithItems, aby zahrnoval upselly
 export type OrderWithItems = Order & {
   items: Array<OrderItem & {
     product?: Products
@@ -236,4 +268,5 @@ export type OrderWithItems = Order & {
       size?: Size
     }
   }>
+  upsells: OrderUpsell[] // Přidání upsellů
 }
