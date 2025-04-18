@@ -1,12 +1,13 @@
 <script setup lang=ts>
 import VueScrollTo from 'vue-scrollto'
 import { useSessionStorage } from '@vueuse/core'
+/* import { Order } from '../server/database/schema' */
 
-const { totalItems } = useCart()
-const { totalPrice } = storeToRefs(useCart())
+const { totalItems, clearCart } = useCart()
+const { totalPrice, cartItems, discount } = storeToRefs(useCart())
 
 const { currentStep, values, errors, meta, isSubmitting, totalOrderPrice } = storeToRefs(useCheckoutStore())
-const { resetForm, handleSubmit, setFieldValue, validateStep, goToPreviousStep } = useCheckoutStore()
+const { resetForm, handleSubmit, setFieldValue, validateStep, goToPreviousStep, handleSubmitForm, checkStock } = useCheckoutStore()
 const { loadStripeElements, loadStripe, handleSubmit: handlePayment } = useStripeStore()
 const { stripe, customerId, isLoading } = storeToRefs(useStripeStore())
 
@@ -31,6 +32,7 @@ const scrollToSection = async () => {
     cancelable: true,
   })
 }
+const toast = useToast()
 
 async function validateUser () {
   isSubmitting.value = true
@@ -38,20 +40,66 @@ async function validateUser () {
     name: `${values.value.firstName} ${values.value.lastName}`,
     email: values.value.email,
   }
-  /* validateStep() */
+  const isValid = await validateStep()
+  if (!isValid) {
+    isSubmitting.value = false
+    toast.add({
+      severity: 'error',
+      summary: 'Chyba',
+      detail: 'Zkontrolujte prosím všechny údaje.',
+      life: 3000,
+    })
+    return
+  }
 
-  loadStripeElements(userData, totalOrderPrice.value)
-  await setTimeout(async () => {
+  const status = await checkStock(cartItems.value)
+
+  if (status.success) {
+    await loadStripeElements(userData, totalOrderPrice.value) // čekáme na načtení prvků
     currentStep.value = 2
+    await nextTick()
     scrollToSection()
-  }, 1000)
+  }
+  isSubmitting.value = false
 }
+
+const createOrder = handleSubmit(async values => {
+  const success = await handlePayment()
+  console.log(success)
+  if (!success) {
+    isSubmitting.value = false
+    return // Zastav vykonávání, pokud platba selhala
+  }
+  /* await handleSubmitForm() */
+  /*
+  if (!order?.success) {
+    isSubmitting.value = false
+
+    toast.add({
+      severity: 'error',
+      summary: 'Chyba',
+      detail: 'Nastala chyba při vytváření objednávky.',
+      life: 3000,
+    })
+    return
+  } */
+  clearCart()
+
+  toast.add({
+    severity: 'success',
+    summary: 'Úspěch',
+    detail: 'Platba byla úspěšně zpracována.',
+    life: 3000,
+  })
+  navigateTo('/success')
+})
 </script>
 
 <template>
   <div container>
+    <Loader v-if="isSubmitting" />
     <div
-      w-full md:flex-row flex-col flex justify-center rounded-md items-center md:justify-between p-2 mb-2rem bg-black
+      w-full md:flex-row flex-col flex justify-center rounded-md items-center md:justify-between p-2 mb-1rem bg-black
       text-white class="[&>div>i]:text-primary-400!"
     >
       <div id="targetSection" text-base font-500 flex gap-1 items-center>
@@ -66,7 +114,12 @@ async function validateUser () {
         <i class="pi pi-download" />
         Získejte okamžitý přístup
       </div>
+      <Button @click="createOrder">
+        TEst objednavka
+      </Button>
     </div>
+    <ProgressBar v-if="isSubmitting" mb-1rem mode="indeterminate" style="height: 6px" />
+
     <div class="grid grid-cols-12 gap-4 grid-nogutter">
       <div class="col-span-12 lg:col-span-6 h-full  ">
         <ul class="flex list-none flex-wrap p-0 mb-12">
@@ -93,9 +146,9 @@ async function validateUser () {
             </div>
           </div>
           <div class=" flex flex-col lg:flex-row gap-1rem justify-center items-center lg:justify-end mt-12">
-            <Button v-if="currentStep === 1" v-ripple size="large" class="w-full  bg-primary-500 text-gray-700" :loading="isSubmitting" :disabled="!meta.valid || isSubmitting" label="Přejít k platbě" @click="validateUser()" />
+            <Button v-if="currentStep === 1" v-ripple size="large" class="w-full  bg-primary-500 text-gray-700" :disabled="!meta.valid || isSubmitting" :loading="isSubmitting || isLoading" label="Přejít k platbě" @click="validateUser()" />
             <Button v-if="currentStep === 2" v-ripple size="large" w-full variant="outlined" :loading="isLoading" label="zpet" @click="goToPreviousStep" />
-            <Button v-if="currentStep === 2" v-ripple size="large" class="w-full  bg-primary-500! text-gray-700" :disabled="isLoading" @click="handlePayment">
+            <Button v-if="currentStep === 2" v-ripple size="large" class="w-full  bg-primary-500! text-gray-700" :disabled="!meta.valid || isLoading || isSubmitting" @click="createOrder">
               Zaplatit
             </Button>
           </div>

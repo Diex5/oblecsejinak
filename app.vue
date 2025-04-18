@@ -32,4 +32,7 @@ input::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+.p-toast {
+  max-width: calc(100vw - 40px);
+}
 </style>

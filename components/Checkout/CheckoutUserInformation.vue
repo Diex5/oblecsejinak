@@ -40,7 +40,7 @@ onMounted(() => {
             <Field v-slot="{ field }" type="text" name="firstName">
               <IconField w-full>
                 <InputIcon class="pi pi-user" />
-                <InputText v-bind="field" placeholder="Například: Karel" w-full class="flex-auto" autocomplete="off" />
+                <InputText :disabled="isSubmitting" v-bind="field" placeholder="Například: Karel" w-full class="flex-auto" autocomplete="off" />
                 <InputIcon v-if="isSubmitting" class="pi pi-spin pi-spinner" />
               </IconField>
             </Field>
@@ -52,7 +52,7 @@ onMounted(() => {
             <Field v-slot="{ field }" type="text" name="lastName">
               <IconField w-full>
                 <InputIcon class="pi pi-user" />
-                <InputText v-bind="field" placeholder="Například: Novák" w-full class="flex-auto" autocomplete="off" />
+                <InputText :disabled="isSubmitting" v-bind="field" placeholder="Například: Novák" w-full class="flex-auto" autocomplete="off" />
                 <InputIcon v-if="isSubmitting" class="pi pi-spin pi-spinner" />
               </IconField>
             </Field>
@@ -64,7 +64,7 @@ onMounted(() => {
           <Field v-slot="{ field }" type="text" name="email">
             <IconField w-full>
               <InputIcon class="pi pi-envelope" />
-              <InputText v-bind="field" placeholder="Například: email@example.com" w-full class="flex-auto" autocomplete="off" />
+              <InputText :disabled="isSubmitting" v-bind="field" placeholder="Například: email@example.com" w-full class="flex-auto" autocomplete="off" />
               <InputIcon v-if="isSubmitting" class="pi pi-spin pi-spinner" />
             </IconField>
           </Field>
@@ -75,7 +75,7 @@ onMounted(() => {
           <Field v-slot="{ field }" type="text" name="phone">
             <IconField w-full>
               <InputIcon class="pi pi-phone" />
-              <InputText v-bind="field" placeholder="Například: xxx-xxx-xxx" w-full class="flex-auto" autocomplete="off" />
+              <InputText :disabled="isSubmitting" v-bind="field" placeholder="Například: xxx-xxx-xxx" w-full class="flex-auto" autocomplete="off" />
               <InputIcon v-if="isSubmitting" class="pi pi-spin pi-spinner" />
             </IconField>
           </Field>
@@ -83,7 +83,7 @@ onMounted(() => {
         </div>
 
         <div class="flex items-center">
-          <Checkbox id="checkbox-2" v-model="checked2" name="checkbox-2" :binary="true" class="text-surface-900 " />
+          <Checkbox id="checkbox-2" v-model="checked2" :disabled="isSubmitting" name="checkbox-2" :binary="true" class="text-surface-900 " />
           <label id="checkbox-2" class="text-surface-900 ml-2">Email me with news and offers</label>
         </div>
       </div>
@@ -94,6 +94,7 @@ onMounted(() => {
         </span>
         <Field v-slot="{ value, handleChange }" name="country">
           <Select
+            :disabled="isSubmitting"
             :model-value="value"
             :options="cities"
             placeholder="Country / Region"
@@ -111,7 +112,7 @@ onMounted(() => {
           <Field v-slot="{ field }" type="text" name="street">
             <IconField w-full>
               <InputIcon class="pi pi-home" />
-              <InputText v-bind="field" placeholder="Například: Hlavní 123" w-full class="flex-auto" autocomplete="off" />
+              <InputText :disabled="isSubmitting" v-bind="field" placeholder="Například: Hlavní 123" w-full class="flex-auto" autocomplete="off" />
               <InputIcon v-if="isSubmitting" class="pi pi-spin pi-spinner" />
             </IconField>
           </Field>
@@ -125,7 +126,7 @@ onMounted(() => {
           <Field v-slot="{ field }" type="text" name="street2">
             <IconField w-full>
               <InputIcon class="pi pi-building" />
-              <InputText v-bind="field" placeholder="Například: Byt 4B" w-full class="flex-auto" autocomplete="off" />
+              <InputText :disabled="isSubmitting" v-bind="field" placeholder="Například: Byt 4B" w-full class="flex-auto" autocomplete="off" />
               <InputIcon v-if="isSubmitting" class="pi pi-spin pi-spinner" />
             </IconField>
           </Field>
@@ -139,7 +140,7 @@ onMounted(() => {
           <Field v-slot="{ field }" type="text" name="zip">
             <IconField w-full>
               <InputIcon class="pi pi-map-marker" />
-              <InputText v-bind="field" placeholder="Např. 123 45" w-full class="flex-auto" autocomplete="off" />
+              <InputText :disabled="isSubmitting" v-bind="field" placeholder="Např. 123 45" w-full class="flex-auto" autocomplete="off" />
               <InputIcon v-if="isSubmitting" class="pi pi-spin pi-spinner" />
             </IconField>
           </Field>
@@ -153,7 +154,7 @@ onMounted(() => {
           <Field v-slot="{ field }" type="text" name="city">
             <IconField w-full>
               <InputIcon class="pi pi-map" />
-              <InputText v-bind="field" placeholder="Například: Praha" w-full class="flex-auto" autocomplete="off" />
+              <InputText :disabled="isSubmitting" v-bind="field" placeholder="Například: Praha" w-full class="flex-auto" autocomplete="off" />
               <InputIcon v-if="isSubmitting" class="pi pi-spin pi-spinner" />
             </IconField>
           </Field>
@@ -163,7 +164,7 @@ onMounted(() => {
 
       <div class="col-span-12 lg:col-span-6 field ">
         <div class="flex items-center">
-          <Checkbox id="checkbox-3" v-model="checked3" name="checkbox-3" :binary="true" class="text-surface-900 " />
+          <Checkbox id="checkbox-3" v-model="checked3" :disabled="isSubmitting" name="checkbox-3" :binary="true" class="text-surface-900 " />
           <label id="checkbox-3" class="text-surface-900 ml-2">Save for next purchase</label>
         </div>
       </div>
@@ -186,7 +187,7 @@ onMounted(() => {
                   v-slot="{ active, checked }"
                   as="template"
                   :value="deliveryMethod"
-                  :aria-label="deliveryMethod.title"
+                  :aria-label="deliveryMethod.title ?? ''"
                   :aria-description="`${deliveryMethod.turnaround} for ${deliveryMethod.price}`"
                 >
                   <div

@@ -4,7 +4,7 @@ import { useIntersectionObserver, useWindowSize } from '@vueuse/core'
 const { fetchProduct } = useProduct()
 const slug = useRoute().params.slug as string
 
-const { product, availableColorsForSelectedSize, availableSizesForSelectedColor, currentVariant, isInStock, quantity } = storeToRefs(useProduct())
+const { product, availableColorsForSelectedSize, availableSizesForSelectedColor, colors, currentVariant, isInStock, quantity } = storeToRefs(useProduct())
 onMounted(async () => {
   await fetchProduct(slug)
 })
@@ -43,16 +43,6 @@ useIntersectionObserver(
 const showBar = computed(() => {
   if (width.value === undefined) return false
   return !isVisible.value
-})
-
-const initial = ref({
-  y: 100,
-  opacity: 0,
-})
-
-const enter = ref({
-  y: 0,
-  opacity: 1,
 })
 </script>
 

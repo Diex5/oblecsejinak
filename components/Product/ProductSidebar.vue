@@ -124,7 +124,7 @@ const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 :
         label="Přidat do košíku"
         @click="addToCart(product, currentVariant, price, quantity)"
       />
-      {{ currentVariant }}{{ currentVariant.size_id }}
+      {{ currentVariant.size_id }}
     </div>
 
     <!-- Doporučení -->

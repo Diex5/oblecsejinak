@@ -1,7 +1,7 @@
 // schema.ts
 import { pgTable, serial, jsonb, text, integer, decimal, timestamp, uniqueIndex } from 'drizzle-orm/pg-core'
 import type { InferModel } from 'drizzle-orm'
-import { relations, sql } from 'drizzle-orm'
+import { relations } from 'drizzle-orm'
 import type { Product } from '../../types/Productor'
 // 1. Samostatné tabulky pro barvy a velikosti
 export const colors = pgTable('colors', {
@@ -78,7 +78,64 @@ export const productFeatures = pgTable('product_features', {
   sort_order: integer('sort_order').default(0),
 })
 
+// objednavky
+
+export const orders = pgTable('orders', {
+  id: serial('id').primaryKey(),
+  user_id: integer('user_id'), // ID uživatele, může být null pro objednávky hostů
+  status: text('status').notNull().default('new'), // new, paid, shipped, delivered, cancelled
+  total_price: integer('total_price').notNull(),
+  subtotal: integer('subtotal'), // Cena bez dopravy a daně
+  shipping_address: jsonb('shipping_address').$type<{
+    name: string
+    street: string
+    street2?: string
+    city: string
+    postal_code: string
+    country: string
+    phone: string
+  }>().notNull(),
+  billing_address: jsonb('billing_address').$type<{
+    name: string
+    street: string
+    city: string
+    postal_code: string
+    country: string
+    phone: string
+    company?: string
+    ico?: string
+    dic?: string
+  }>(),
+  shipping_method: text('shipping_method').notNull(),
+  shipping_price: integer('shipping_price').notNull(),
+  payment_method: text('payment_method').notNull(),
+  payment_status: text('payment_status').notNull().default('pending'), // pending, paid, failed
+  payment_id: text('payment_id'), // ID platby od poskytovatele plateb
+  discount: integer('discount').default(0),
+  discount_code: text('discount_code'), // Kód slevy
+  note: text('note'),
+  created_at: timestamp('created_at').defaultNow(),
+  updated_at: timestamp('updated_at').defaultNow(),
+})
+
+export const orderItems = pgTable('order_items', {
+  id: serial('id').primaryKey(),
+  order_id: integer('order_id').notNull().references(() => orders.id),
+  product_id: integer('product_id').notNull().references(() => products.id),
+  variant_id: integer('variant_id').references(() => productVariants.id),
+  quantity: integer('quantity').notNull(),
+  price: decimal('price', { precision: 10, scale: 2 }).notNull(), // Cena v době objednávky
+  // Případná sleva
+  name: text('name').notNull(), // Název produktu v době objednávky
+  color_name: text('color_name'), // Název barvy v době objednávky
+  size_name: text('size_name'), // Název velikosti v době objednávky
+})
 // 4. Definice vztahů
+
+export const ordersRelations = relations(orders, ({ many }) => ({
+  items: many(orderItems),
+}))
+
 export const productsRelations = relations(products, ({ many }) => ({
   variants: many(productVariants),
   tabs: many(productTabs),
@@ -129,6 +186,22 @@ export const variantsRelations = relations(productVariants, ({ one }) => ({
     references: [sizes.id],
   }),
 }))
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderItems.order_id],
+    references: [orders.id],
+  }),
+  product: one(products, {
+    fields: [orderItems.product_id],
+    references: [products.id],
+  }),
+  variant: one(productVariants, {
+    fields: [orderItems.variant_id],
+    references: [productVariants.id],
+  }),
+}))
+
 export type Products = InferModel<typeof products>
 export type Variant = InferModel<typeof productVariants>
 export type Color = InferModel<typeof colors>
@@ -150,4 +223,17 @@ export type ProductWithVariants = Product & {
   accordions: ProductAccordion[]
   features: ProductFeature[]
   benefits: ProductBenefit[]
+}
+export type Order = InferModel<typeof orders>
+export type OrderItem = InferModel<typeof orderItems>
+
+// Typy pro vnořené objekty
+export type OrderWithItems = Order & {
+  items: Array<OrderItem & {
+    product?: Products
+    variant?: Variant & {
+      color?: Color
+      size?: Size
+    }
+  }>
 }

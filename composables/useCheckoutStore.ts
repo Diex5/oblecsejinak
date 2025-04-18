@@ -8,11 +8,19 @@ interface UpsellItem {
   title: string
   isSelected: boolean
 }
-
+type StockCheckResponse = {
+  success: boolean
+  message?: string
+  stockCheck?: {
+    product_id: string
+    variant_id: string
+    message: string
+  }[]
+}
 export const useCheckoutStore = defineStore('checkout', () => {
   const currentStep = ref(1)
-
-  const { totalPrice } = storeToRefs(useCart())
+  const toast = useToast()
+  const { totalPrice, cartItems, discount } = storeToRefs(useCart())
 
   const emailValidation = yup
     .string()
@@ -81,19 +89,12 @@ export const useCheckoutStore = defineStore('checkout', () => {
 
   const validateStep = async () => {
     if (currentStep.value === 1) {
-      const fields = ['firstName', 'lastName', 'email', 'phone']
+      const fields = ['firstName', 'lastName', 'email', 'phone', 'street', 'city', 'zip', 'country', 'shippingMethod']
       const results = await Promise.all(fields.map(field => validateField(field as keyof typeof values)))
       const isValid = results.every(r => r.valid)
-      /*  if (isValid) currentStep.value = 2 */
-      return isValid
+      if (isValid) return true
+      return false
     }
-
-    /*  if (currentStep.value === 2) {
-      const fields = ['street', 'city', 'zip', 'country', 'shippingMethod']
-      const results = await Promise.all(fields.map(field => validateField(field as keyof typeof values)))
-      const isValid = results.every(r => r.valid)
-      return isValid
-    } */
   }
 
   const goToPreviousStep = () => {
@@ -125,9 +126,85 @@ export const useCheckoutStore = defineStore('checkout', () => {
     const upsellTotal = onlyActiveUpsells.value.reduce((sum, u) => sum + u.price, 0)
     const shippingPrice = parseFloat(values.shippingMethod?.price || '0')
 
-    return totalPrice.value + shippingPrice + upsellTotal
+    return Math.ceil(totalPrice.value + shippingPrice + upsellTotal).toFixed(1)
   })
-  console.log(totalPrice)
+
+  async function handleSubmitForm () {
+    try {
+      const { success, order_id } = await $fetch('/api/orders/create', {
+        method: 'POST',
+        body: JSON.stringify({
+          user_id: 123,
+          shipping_address: {
+            name: `${values.firstName} ${values.lastName}`,
+            street: values.street,
+            city: values.city,
+            postal_code: values.zip,
+            country: values.country,
+            phone: values.phone,
+          },
+
+          shipping_method: values.shippingMethod.title,
+          shipping_price: values.shippingMethod.price,
+          total_price: totalOrderPrice.value,
+          subtotal: Math.ceil(totalPrice.value).toFixed(1),
+          discount: discountedPrice,
+          discount_code: discount.value.code,
+          payment_method: 'card',
+          note: 'Prosím doručit ve večerních hodinách.',
+          items: cartItems.value.map((item: CartItem) => ({
+            product_id: item.productId,
+            variant_id: item.variantId,
+            quantity: item.quantity,
+            price: item.price,
+            name: item.name,
+            color_name: item.color?.name,
+            size_name: item.size?.name,
+          })),
+        }),
+      })
+      return { success, order_id }
+
+      /*   upsells: onlyActiveUpsells.value.map(item => ({
+            id: item.id,
+            title: item.title,
+            price: item.price,
+          })), */
+    }
+    catch (error: any) {
+      console.error('Error creating order:', error)
+
+      return { success: false }
+    }
+  }
+
+  async function checkStock (items: CartItem[]) {
+    const response = await $fetch<StockCheckResponse>('/api/products/check-stock', {
+      method: 'POST',
+      body: {
+        items: items.map((item: CartItem) => ({
+          product_id: item.productId,
+          variant_id: item.variantId,
+          quantity: item.quantity,
+        })),
+      },
+    })
+
+    if (!response.success && response.stockCheck && response.stockCheck.length > 0) {
+      response.stockCheck.forEach(item => {
+        toast.add({
+          severity: 'error',
+          summary: 'Nedostatek kusů skladem',
+          detail: item.message,
+          life: 4000,
+        })
+      })
+      isSubmitting.value = false
+    }
+
+    return response
+  }
+
   return {
     currentStep,
     values,
@@ -136,8 +213,10 @@ export const useCheckoutStore = defineStore('checkout', () => {
     meta,
     onlyActiveUpsells,
     totalOrderPrice,
+    handleSubmitForm,
     toggleUpsell,
     resetForm,
+    checkStock,
     handleSubmit,
     setFieldValue,
     validateStep,

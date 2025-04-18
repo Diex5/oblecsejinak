@@ -28,11 +28,6 @@ export const useStripeStore = defineStore('stripe', () => {
     // Není třeba explicitně ukládat do localStorage, useStorage se o to stará automaticky
     if (import.meta.env.SSR) return
   }
-  const userData = {
-    name: 'Jan Novak',
-    email: 'jan@wnekde.cz',
-    uuid: '123-abc',
-  }
 
   async function loadStripeElements (userData: { name: string, email: string }, amount: number) {
     if (stripe.value) {
@@ -65,7 +60,7 @@ export const useStripeStore = defineStore('stripe', () => {
     }
   }
   const handleSubmit = async () => {
-    if (isLoading.value) return
+    if (isLoading.value) return false
     isLoading.value = true
 
     try {
@@ -89,7 +84,7 @@ export const useStripeStore = defineStore('stripe', () => {
           detail: 'Platba nebyla úspěšná, kontaktujte nás',
           life: 3000,
         })
-        return
+        return false
       }
       console.log('PaymentIntent:', paymentIntent)
       if (paymentIntent) {
@@ -99,12 +94,13 @@ export const useStripeStore = defineStore('stripe', () => {
         toast.add({
           severity: 'success',
           summary: 'Platba byla úspěšná',
-          detail: 'Děkujeme! Položka je přidána k objednávce',
+          /*  detail: 'Děkujeme! Položka je přidána k objednávce', */
           life: 3000,
         })
-
-        navigateTo('/success')
+        return true
+        /*  navigateTo('/success') */
       }
+      return false
     }
     catch (e) {
       console.error('Payment error:', e)
@@ -121,5 +117,5 @@ export const useStripeStore = defineStore('stripe', () => {
     }
   }
 
-  return { customerId, paymentMethodId, setPaymentInfo, loadStripeElements, stripe, loadStripe, handleSubmit }
+  return { customerId, paymentMethodId, errors, setPaymentInfo, loadStripeElements, stripe, loadStripe, handleSubmit }
 })
