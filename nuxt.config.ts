@@ -70,12 +70,14 @@ export default defineNuxtConfig({
     // but missing on offline, disabling extraction it until fixed
     payloadExtraction: false,
     typedPages: true,
-    componentIslands: true,
-    treeshakeClientOnly: false,
 
   },
   compatibilityDate: '2024-11-01',
   nitro: {
+    experimental: {
+      openAPI: true,
+
+    },
     preset: 'cloudflare_pages',
     esbuild: {
       options: {
@@ -86,6 +88,7 @@ export default defineNuxtConfig({
 
   hub: {
     database: false,
+
     dir: '.data/hub',
     bindings: {
       compatibilityFlags: ['nodejs_compat_v2'],
@@ -131,17 +134,6 @@ export default defineNuxtConfig({
       },
     },
   },
-  /* nodemailer: {
-    from: '"ostom.cz" <dev@mail.develit.io>',
-    host: 'smtp.seznam.cz',
-    port: 465,
-    secure: true,
-    auth: {
-      user: 'dev@mail.develit.io',
-      pass: process.env.NUXT_NODEMAILER_AUTH_PASS ?? '',
-    },
-  }, */
-
   stripe: {
     server: {
       key: process.env.STRIPE_SECRET_KEY,
@@ -155,6 +147,17 @@ export default defineNuxtConfig({
       options: {},
     },
   },
+  /* nodemailer: {
+    from: '"ostom.cz" <dev@mail.develit.io>',
+    host: 'smtp.seznam.cz',
+    port: 465,
+    secure: true,
+    auth: {
+      user: 'dev@mail.develit.io',
+      pass: process.env.NUXT_NODEMAILER_AUTH_PASS ?? '',
+    },
+  }, */
+
   target: 'static',
 
 })
