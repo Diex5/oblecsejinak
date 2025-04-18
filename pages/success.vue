@@ -236,6 +236,7 @@ const progressBarWidth = computed(() => {
 
 <template>
   <div class="min-h-screen bg-gradient-to-br from-cyan-50 via-primary-50 to-white p-2">
+    <Loader v-if="isLoading" />
     <div class="container mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
       <!-- Horní varování - více výrazné -->
       <div class="text-center pt-2">

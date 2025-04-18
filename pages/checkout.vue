@@ -70,7 +70,7 @@ const createOrder = handleSubmit(async values => {
     isSubmitting.value = false
     return // Zastav vykonávání, pokud platba selhala
   }
-  /* await handleSubmitForm() */
+  await handleSubmitForm()
   /*
   if (!order?.success) {
     isSubmitting.value = false
@@ -83,7 +83,7 @@ const createOrder = handleSubmit(async values => {
     })
     return
   } */
-  clearCart()
+
   navigateTo('/success')
   toast.add({
     severity: 'success',
@@ -91,6 +91,7 @@ const createOrder = handleSubmit(async values => {
     detail: 'Platba byla úspěšně zpracována.',
     life: 3000,
   })
+  clearCart()
 })
 </script>
 
