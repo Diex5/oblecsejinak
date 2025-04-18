@@ -84,14 +84,13 @@ const createOrder = handleSubmit(async values => {
     return
   } */
   clearCart()
-
+  navigateTo('/success')
   toast.add({
     severity: 'success',
     summary: 'Úspěch',
     detail: 'Platba byla úspěšně zpracována.',
     life: 3000,
   })
-  navigateTo('/success')
 })
 </script>
 

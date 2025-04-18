@@ -10,9 +10,8 @@ const props = defineProps<{
 
 const emit = defineEmits(['increment-count', 'decrement-count', 'update-color', 'update-size', 'update-variant'])
 
-const { selectedColorId, selectedSizeId, isInStock, price, currentVariant, quantity } = storeToRefs(useProduct())
-const { clearCart, totalItems, addToCart } = useCart()
-const { cartItems } = storeToRefs(useCart())
+const { isInStock, price, currentVariant, quantity } = storeToRefs(useProduct())
+const { addToCart } = useCart()
 
 /* onMounted(() => {
   // Získání varianty produktu
@@ -64,16 +63,16 @@ const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 :
 
     <!-- Video náhled -->
     <div class="cursor-pointer relative w-full h-60 rounded-lg overflow-hidden shadow-md hover:opacity-95 transition-opacity">
-      <!-- <div class="w-full h-full bg-[rgba(0,0,0,0.08)] absolute top-0 left-0 z-10 flex items-center justify-center">
-        <div class="bg-surface-0 rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:bg-primary hover:text-white transition-colors">
+      <div class="w-full h-full bg-[rgba(0,0,0,0.08)] absolute top-0 left-0 z-10 flex items-center justify-center">
+        <div v-if="false" class="bg-surface-0 rounded-full w-12 h-12 flex items-center justify-center shadow-lg hover:bg-primary hover:text-white transition-colors">
           <i class="pi pi-play text-lg text-surface-900 ml-0.5" />
         </div>
-      </div> -->
-      <!--  <img
+      </div>
+      <NuxtImg
         class="absolute top-0 left-0 w-full h-full object-cover"
-        :src="videoThumbnail"
+        :src="product.images[0]"
         alt="Video náhled produktu"
-      > -->
+      />
     </div>
     <!-- <Test /> -->
     <div class="flex items-center gap-3 mt-2">
@@ -124,16 +123,15 @@ const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 :
         label="Přidat do košíku"
         @click="addToCart(product, currentVariant, price, quantity)"
       />
-      {{ currentVariant.size_id }}
     </div>
 
     <!-- Doporučení -->
-    <!--  <div class="bg-surface-50 rounded-lg p-4 mb-6 mt-4 shadow-sm">
+    <!--   <div class="bg-surface-50 rounded-lg p-4 mb-6 mt-4 shadow-sm">
       <div class="text-surface-900 text-xl font-medium mb-6">
         Doporučujeme k produktu
       </div>
       <div class="flex items-center">
-        <img :src="recommendation.image" class="w-20 h-20 flex-shrink-0 object-cover rounded-md">
+        <img :src="product.images[5]" class="w-20 h-20 flex-shrink-0 object-cover rounded-md">
         <div class="pl-4">
           <span class="text-surface-900 text-lg font-medium">
             {{ recommendation.name }}
@@ -152,15 +150,6 @@ const emptyStars = computed(() => 5 - fullStars.value - (hasHalfStar.value ? 1 :
     </div> -->
 
     <!-- Seznam benefitů -->
-    <!-- <ul class="list-none w-full flex flex-col items-center justify-center text-lg p-0 m-0 font-medium text-surface-600 bg-surface-50 rounded-lg py-6 shadow-sm">
-      <li
-        v-for="(benefit, index) in product.benefits"
-        :key="index"
-        class="flex items-center mb-4 last:mb-0"
-      >
-        <i :class="benefit.icon" class="mr-3 text-primary" />
-        <span>{{ benefit.text }}</span>
-      </li>
-    </ul> -->
+    <ProductBenefit md:block hidden :benefits="product.benefits" />
   </div>
 </template>

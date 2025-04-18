@@ -1,7 +1,7 @@
 import type { ProductWithVariants } from '~/server/database/schema'
 
 export const useProduct = defineStore('product', () => {
-  const product = ref<ProductWithVariants>() || null
+  const product = ref<ProductWithVariants | null>() || null
   const selectedColorId = ref()
   const selectedSizeId = ref()
   const quantity = ref(1)

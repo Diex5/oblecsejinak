@@ -8,17 +8,17 @@ import {
 
 export const themeColors = {
   primary: {
-    50: '#e0ffff', // Lightest azure
-    100: '#b2ffff', // Lighter azure
-    200: '#80ffff', // Light azure
-    300: '#4dffff', // Medium light azure
-    400: '#1affff', // Medium azure
-    500: '#00e5e5', // Main azure
-    600: '#00b3b3', // Darker azure
-    700: '#008080', // Even darker azure
-    800: '#004d4d', // Dark azure
-    900: '#002626', // Darkest azure
-    950: '#001313', // Very dark azure
+    50: '#ebfcfd', // Lightest azure
+    100: '#d0f7fa', // Lighter azure
+    200: '#a7eef5', // Light azure
+    300: '#77e2ee', // Medium light azure
+    400: '#3FD0DB', // Medium azure (your reference color)
+    500: '#3FD0DB', // Main azure (your specified color)
+    600: '#25b3c1', // Darker azure
+    700: '#1e8f9a', // Even darker azure
+    800: '#196a73', // Dark azure
+    900: '#124b52', // Darkest azure
+    950: '#082a2f', // Very dark azure
   },
   surface: {
     0: '#f3f4f6', // Jemně šedá, místo čisté bílé
@@ -61,6 +61,9 @@ export default defineConfig({
         bebas: 'Bebas Neue',
         gloria: 'Gloria Hallelujah',
       },
+      fetchOptions: {
+        timeout: 10000, // Increase timeout to 10 seconds (default might be lower)
+      },
     }),
   ],
   theme: {
@@ -72,4 +75,5 @@ export default defineConfig({
       black: themeColors.surface[950],
     },
   },
+
 })

@@ -20,26 +20,34 @@ const props = defineProps<{
 
     <!-- Seznam vlastností -->
     <div class="md:mt-8 mt-6 text-xl">
-      <ul class="ml-5 list-disc flex flex-col gap-4 font-sans font-600 ">
+      <ul class="ml-5 list-none flex flex-col gap-4 font-sans font-600 ">
         <li
           v-for="(feature, index) in product.features"
           :key="index"
           v-motion-fade-visible-once
           class="text-surface-700 leading-relaxed"
         >
-          {{ feature }}
+          <div>
+            <UnoIcon
+
+              class="text-primary mr-3 text-xl" :class="feature.icon"
+            />
+            <span class="text-surface-700 leading-relaxed">
+              {{ feature.content }}
+            </span>
+          </div>
         </li>
       </ul>
     </div>
 
     <!-- Záložky s informacemi -->
     <div class="mt-12 text-xl">
-      <Tabs v-motion-fade-visible-once value="0" bg-transparent>
+      <Tabs v-motion-fade-visible-once scrollable value="0" bg-transparent>
         <TabList class="bg-transparent border-b border-surface-200 font-600 font-oswald ">
           <Tab
-            v-for="tab in product.tabs"
+            v-for="(tab, index) in product.tabs"
             :key="tab.id"
-            :value="tab.id"
+            :value="String(index)"
             class="px-6 py-3 font-medium text-xl"
           >
             {{ tab.title }}
@@ -47,25 +55,15 @@ const props = defineProps<{
         </TabList>
         <TabPanels class="!px-0 bg-transparent  pt-6">
           <TabPanel
-            v-for="tab in product.tabs"
+            v-for="(tab, index) in product.tabs"
             :key="tab.id"
-            :value="tab.id"
+            :value="String(index)"
           >
-            <span v-for="item in tab.content" :key="item" v-html="item.html" />
+            <span class="[&>p]:font-600 [&>table]:my-4 [&>table>tbody>tr>td]:border-1! [&>ul]:list-disc [&>ul]:list-inside [&>ul]:my-4 [&>ul]:ml-4 my-4 flex flex-col text-left" v-html="tab.content" />
           </TabPanel>
         </TabPanels>
       </Tabs>
+      <ProductBenefit md:hidden block :benefits="product.benefits" />
     </div>
-    <ul class="list-none w-full  md:block hidden flex flex-col items-center justify-center text-lg p-0 m-0 font-medium text-surface-600 bg-surface-50 rounded-lg py-6 shadow-sm">
-      <li
-        v-for="(benefit, index) in product.benefits"
-        :key="index"
-        pl-1rem
-        class="flex items-center mb-4 last:mb-0"
-      >
-        <i :class="benefit.icon" class="mr-3 text-primary" />
-        <span>{{ benefit.text }}</span>
-      </li>
-    </ul>
   </div>
 </template>

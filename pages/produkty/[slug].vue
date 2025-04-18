@@ -44,6 +44,15 @@ const showBar = computed(() => {
   if (width.value === undefined) return false
   return !isVisible.value
 })
+const initial = ref({
+  y: 100,
+  opacity: 0,
+})
+
+const enter = ref({
+  y: 0,
+  opacity: 1,
+})
 </script>
 
 <template>
@@ -70,11 +79,15 @@ const showBar = computed(() => {
         </div>
 
         <!-- Galerie produktu -->
-        <!-- <ProductGallery
+        <div
           v-motion
           :initial="initial"
-          :enter="enter" :product="rawProduct"
-        /> -->
+          :enter="enter"
+        >
+          <ProductGallery
+            :images="product.images"
+          />
+        </div>
 
         <div ref="mainSection" class="v-motion-fade-visible mt-16 flex items-start gap-1rem md:gap-6rem lg:flex-row flex-col">
           <!-- Informace o produktu -->
@@ -104,9 +117,9 @@ const showBar = computed(() => {
       <div class="mt-16">
         <TestimonialSlideGradient />
       </div>
-    <!--  <div container class="mt-16">
-      <ProductAccordion :items="product.accordion" />
-    </div> -->
+      <div container class="mt-16">
+        <ProductAccordion :items="product.accordions.map(item => ({ header: item.title, content: item.content, value: item.title }))" />
+      </div>
     </div>
     <div v-else>
       Neni zadnej produkt

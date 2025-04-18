@@ -9,16 +9,11 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits(['increment-count', 'decrement-count', 'update-color', 'update-size'])
-const { addToCart } = useCart()
 
-const { selectedColorId, selectedSizeId, isInStock, currentVariant } = storeToRefs(useProduct())
+const { addToCart } = useCart()
+const { isInStock, price, currentVariant, quantity } = storeToRefs(useProduct())
 
 const visible = ref(false)
-
-const addToCartMobile = (variant: any) => {
-  addToCart({ product: props.product, variant })
-  visible.value = false
-}
 </script>
 
 <template>
@@ -40,7 +35,7 @@ const addToCartMobile = (variant: any) => {
           class="!text-1.4rem font-oswald! !font-medium md:flex! hidden! !text-black" h-fit bg-primary-500
           icon="pi pi-cart-plus"
           label="Přidat do košíku"
-          @click="addToCart({ product, variant: { colorId: 2, sizeId: 3, price: 997 } })"
+          @click="addToCart(product, currentVariant, price, quantity)"
         />
       </div>
       <div md:hidden flex>
@@ -83,7 +78,7 @@ const addToCartMobile = (variant: any) => {
             class="!text-1.4rem !py-4 font-oswald!  !text-black" bg-primary-500
             icon="pi pi-cart-plus"
             label="Přidat do košíku"
-            @click="addToCartMobile({ variant: { colorId: 2, sizeId: 3, price: 997 } })"
+            @click="addToCart(product, currentVariant, price, quantity)"
           />
         </div>
       </Dialog>
