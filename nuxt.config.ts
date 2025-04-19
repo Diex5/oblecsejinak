@@ -45,7 +45,10 @@ export default defineNuxtConfig({
       htmlAttrs: { lang: 'cs' },
       title: 'OblecSeJinak',
     },
-    pageTransition: false,
+    pageTransition: {
+      name: 'page',
+      mode: 'out-in',
+    },
     layoutTransition: false,
   },
   css: [
@@ -140,13 +143,13 @@ export default defineNuxtConfig({
   },
   stripe: {
     server: {
-      key: process.env.STRIPE_SECRET_KEY,
+      key: 'sk_test_51JqJocGMdfWxxASSjj4YR74Z0qWqlBxijVzU616UMpiVChZKq4cz5srP9qvlG1YNsbb6nkhoBJsugDcZCyKTjWNq00CvkLuIaC',
       options: {
 
       },
     },
     client: {
-      key: process.env.STRIPE_PUBLIC_KEY,
+      key: 'pk_test_51JqJocGMdfWxxASS2RFmN8nMjHGdGMZ7pZd8HImodzcnmzUa2B9jg4VtLL2QKD87O3yxAlM9HLu0MwPPUuQBAuK300d0GONWiM',
       manualClientLoad: true,
       options: {},
     },

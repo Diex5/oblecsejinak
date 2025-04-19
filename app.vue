@@ -35,4 +35,13 @@ input[type=number] {
 .p-toast {
   max-width: calc(100vw - 40px);
 }
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.4s ease;
+}
+.page-enter-from,
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
 </style>

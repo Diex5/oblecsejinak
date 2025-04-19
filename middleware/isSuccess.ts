@@ -5,7 +5,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
   if (import.meta.client) {
     // Hodnota status bude načtena z sessionStorage
     const status = useSessionStorage('status') // Výchozí hodnota, pokud není nastavena ve sessionStorage
-
+    console.log('Status:', status.value)
     // Zkontroluj hodnotu status
     if (status.value !== 'success') {
       if (to.path === '/success') {

@@ -9,21 +9,19 @@ const { totalPrice, cartItems, discount } = storeToRefs(useCart())
 const { currentStep, values, errors, meta, isSubmitting, totalOrderPrice } = storeToRefs(useCheckoutStore())
 const { resetForm, handleSubmit, setFieldValue, validateStep, goToPreviousStep, handleSubmitForm, checkStock } = useCheckoutStore()
 const { loadStripeElements, loadStripe, handleSubmit: handlePayment } = useStripeStore()
-const { stripe, customerId, isLoading } = storeToRefs(useStripeStore())
+const { stripe, customerId, isLoading, status } = storeToRefs(useStripeStore())
 
 onMounted(async () => {
-  if (!totalItems || !totalPrice || totalPrice <= 0) {
-    navigateTo('/')
-  }
-  useSessionStorage('status', '')
+  const route = useRoute()
   customerId.value = null
   stripe.value = await loadStripe()
-})
-watch(totalPrice, newValue => {
-  if (!totalItems || newValue <= 0) {
-    navigateTo('/')
+  if (route.name === 'checkout') {
+    if (!totalItems || !totalPrice || totalPrice <= 0) {
+      navigateTo('/')
+    }
   }
 })
+
 const scrollToSection = async () => {
   // Nastavení pomalého scrollu
   VueScrollTo.scrollTo('#targetSection', 1000, {
@@ -52,9 +50,9 @@ async function validateUser () {
     return
   }
 
-  const status = await checkStock(cartItems.value)
+  const data = await checkStock(cartItems.value)
 
-  if (status.success) {
+  if (data.success) {
     await loadStripeElements(userData, totalOrderPrice.value) // čekáme na načtení prvků
     currentStep.value = 2
     await nextTick()
@@ -83,15 +81,14 @@ const createOrder = handleSubmit(async values => {
     })
     return
   } */
-
-  navigateTo('/success')
+  await clearCart()
+  await navigateTo('/success')
   toast.add({
     severity: 'success',
     summary: 'Úspěch',
     detail: 'Platba byla úspěšně zpracována.',
     life: 3000,
   })
-  clearCart()
 })
 </script>
 

@@ -8,6 +8,7 @@
     <div>
       <Toast />
       <slot />
+      <ModalShoppingCart />
     </div>
 
     <!--  <Footer /> -->
