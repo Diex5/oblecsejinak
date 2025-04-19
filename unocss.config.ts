@@ -13,7 +13,7 @@ export const themeColors = {
     200: '#a7eef5', // Light azure
     300: '#77e2ee', // Medium light azure
     400: '#3FD0DB', // Medium azure (your reference color)
-    500: '#3FD0DB', // Main azure (your specified color)
+    500: '#78DEE5', // Main azure (your specified color)
     600: '#25b3c1', // Darker azure
     700: '#1e8f9a', // Even darker azure
     800: '#196a73', // Dark azure

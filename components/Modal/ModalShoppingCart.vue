@@ -6,173 +6,190 @@ const { cartItems, isCartOpened, totalPrice, discount } = storeToRefs(useCart())
 
 const reversedCartItems = computed(() => [...cartItems.value].reverse())
 
-const qtn = ref()
+function redirectToCheckout () {
+  if (cartItems.value.length === 0) {
+    return
+  }
+  // Přesměrování na pokladnu
+  toggleCart()
+  navigateTo('/checkout')
+}
 </script>
 
 <template>
-  <ClientOnly>
-    <HeadlessTransitionRoot as="template" :show="isCartOpened">
-      <HeadlessDialog class="relative z-999" @close="isCartOpened = false">
-        <!-- Překrytí pozadí -->
-        <HeadlessTransitionChild
-          as="template"
-          :show="isCartOpened"
-          enter="ease-in-out duration-500"
-          enter-from="opacity-0"
-          enter-to="opacity-100"
-          leave="ease-in-out duration-500"
-          leave-from="opacity-100"
-          leave-to="opacity-0"
-        >
-          <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-        </HeadlessTransitionChild>
+  <div>
+    <!-- Překrytí pozadí -->
+    <Transition name="fade">
+      <div
+        v-if="isCartOpened"
+        class="fixed inset-0 bg-gray-500 bg-opacity-75 z-980"
+        @click="toggleCart()"
+      />
+    </Transition>
 
-        <div class="fixed inset-0 overflow-hidden">
-          <div class="absolute inset-0 overflow-hidden">
-            <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-              <!-- Panel košíku -->
-              <HeadlessTransitionChild
-                as="template"
-                :show="isCartOpened"
-                enter="transform transition ease-in-out duration-500 sm:duration-700"
-                enter-from="translate-x-full"
-                enter-to="translate-x-0"
-                leave="transform transition ease-in-out duration-500 sm:duration-700"
-                leave-from="translate-x-0"
-                leave-to="translate-x-full"
-              >
-                <HeadlessDialogPanel class="pointer-events-auto w-screen max-w-md">
-                  <div class="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
-                    <div class="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
-                      <!-- Hlavička -->
-                      <div class="flex items-start justify-between">
-                        <HeadlessDialogTitle class="text-lg font-medium text-gray-900">
-                          Košík
-                        </HeadlessDialogTitle>
-                        <div class="ml-3 flex h-7 items-center">
-                          <button
-                            type="button"
-                            class="relative -m-2 p-2 text-gray-400 hover:text-gray-500"
-                            @click="isCartOpened = false"
-                          >
-                            <span class="absolute -inset-0.5" />
-                            <span class="sr-only">Zavřít panel</span>
-                            <UnoIcon class="pi pi-times h-6 w-6" aria-hidden="true" />
-                          </button>
-                        </div>
-                      </div>
+    <!-- Panel košíku -->
+    <Transition name="slide">
+      <div
+        v-if="isCartOpened"
+        class="fixed inset-y-0 right-0 z-990 w-full md:w-96 bg-gray-50 flex flex-col"
+      >
+        <div class="flex items-center justify-between p-4 border-b">
+          <h2 class="text-lg font-medium text-gray-900">
+            Košík
+          </h2>
+          <button
+            class="p-2 text-gray-400 hover:text-gray-500 transition-colors"
+            @click="toggleCart()"
+          >
+            <span class="pi pi-times h-6 w-6" />
+          </button>
+        </div>
 
-                      <div class="mt-8">
-                        <div class="flow-root">
-                          <!-- Seznam položek košíku -->
-                          <ul v-auto-animate class="-my-6 divide-y divide-gray-200 min-h-[300px] w-full">
-                            <!-- qs -->
-                            <li v-for="(cart, index) in reversedCartItems" :key="index" class="flex py-6" w-full>
-                              <div class="flex items-start md:items-center border-t w-full border-surface pt-6 mb-6">
-                                <img src="https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images/blocks/ecommerce/shoppingcart/shopping-cart-5-1.png" class="w-20 h-20 flex-shrink-0">
-                                <div class="pl-4 flex-auto">
-                                  <div class="flex items-center justify-between ">
-                                    <span class="text-primary font-medium">{{ cart.name }}</span>
-                                    <a class="cursor-pointer text-primary hover:text-primary-emphasis transition-colors duration-300" @click="removeItem(cart.productId, cart.variantId)"><i class="pi pi-trash !text-xl !leading-none" /></a>
-                                  </div>
-                                  <div flex items-center gap-2>
-                                    <div w-3 h-3 rounded-full :style="{ backgroundColor: cart.color.hex_code }" />
-                                    <span class="text-surface-500 text-lg">{{ cart.size.name }}</span>
-                                  </div>
-                                  <div class="flex items-center justify-between mt-2">
-                                    <InputNumber
-                                      v-model="cart.quantity"
-                                      :show-buttons="true"
-                                      button-layout="horizontal"
-                                      spinner-mode="horizontal"
-                                      :min="1"
-                                      :max="cart.max_quantity"
-                                      input-class="w-8 md:w-12 font-bold text-center bg-gray-50! "
-                                      decrement-button-class="p-button-text"
-                                      increment-button-class="p-button-text "
-                                      increment-button-icon="pi pi-plus"
-                                      decrement-button-icon="pi pi-minus"
-                                      increment-button-icon-class="!text-base !leading-none"
-                                      decrement-button-icon-class="!text-xs !leading-none"
-                                      @update:model-value=" updateQuantity(cart.productId, cart.variantId, cart.quantity, cart.max_quantity)"
-                                    />
-                                    <span class="text-surface-900 dark:text-surface-0 font-medium">{{ formatPrice(cart.price) }}</span>
-                                  </div>
-                                </div>
-                              </div>
-                            </li>
-                          </ul>
-                          <div class="bg-surface-50 dark:bg-surface-800 p-4 flex items-center rounded-border">
-                            <Checkbox :binary="true" />
-                            <span class="ml-2 text-surface-900 dark:text-surface-0">Add Warranty</span>
-                            <span class="text-surface-900 dark:text-surface-0 font-medium ml-auto">$5.00</span>
-                          </div>
-                        </div>
-                      <!-- Slevový kupón -->
-                      </div>
-                    </div>
-
-                    <!-- Patička s cenou a tlačítky -->
-                    <div v-auto-animate class="border-t border-gray-200 px-4 py-3 sm:px-6">
-                      <CouponComponent v-if="!discount.isActive" my-4 />
-
-                      <div v-if="discount.isActive" class="flex justify-between text-base font-medium text-gray-900 mb-2">
-                        <p>Kupón: <b bg-primary-100 px-2 text-base rounded-md> {{ discount.name }}</b><UnoIcon class="pi pi-times hover:text-red-500 text-base ml-2 transition-all duration-250 cursor-pointer mr-4" aria-hidden="true" @click="removeDiscount()" /></p>
-                        <p text-red-600 font-bold>
-                          -{{ formatPrice(discount.discountedAmount) }}
-                        </p>
-                      </div>
-                      <div class="flex justify-between text-base font-medium text-gray-900">
-                        <p>Mezisoučet</p>
-                        <p>{{ formatPrice(totalPrice) }}</p>
-                      </div>
-                      <p class="mt-0.5 text-sm text-gray-500">
-                        Doprava a daně budou vypočítány při pokladně.
-                      </p>
-                      <div class="mt-6">
-                        <NuxtLink to="/checkout">
-                          <Button v-ripple variant="primary" class="w-full bg-primary-500 text-gray-700" label="Přejít k pokladně" size="large" />
-                        </NuxtLink>
-                      </div>
-                      <div class="mt-6 flex justify-center text-center text-sm text-gray-500 w-full">
-                        <p class="w-full flex flex-col gap-[4px]">
-                          nebo
-                          <Button label="Pokračovat v nákupu" variant="text" class="w-full" @click="toggleCart()" />
-                        </p>
-                      </div>
-                    </div>
+        <div class="flex-1 overflow-y-auto p-4 bg-white inset-shadow-lg inset-shadow-indigo-500">
+          <TransitionGroup name="list" tag="ul" class="divide-y  divide-gray-200 min-h-[300px]">
+            <li
+              v-for="(cart) in reversedCartItems"
+              :key="cart.productId + cart.variantId"
+              class="py-4 flex w-full"
+            >
+              <div class="flex items-start md:items-center w-full">
+                <img
+                  src="https://fqjltiegiezfetthbags.supabase.co/storage/v1/render/image/public/block.images/blocks/ecommerce/shoppingcart/shopping-cart-5-1.png"
+                  class="w-20 h-20 flex-shrink-0 object-cover rounded"
+                >
+                <div class="pl-4 flex-auto">
+                  <div class="flex items-center justify-between">
+                    <span class="text-primary font-medium">{{ cart.name }}</span>
+                    <button
+                      class="text-primary hover:text-red-500 transition-colors"
+                      @click="removeItem(cart.productId, cart.variantId)"
+                    >
+                      <i class="pi pi-trash text-xl" />
+                    </button>
                   </div>
-                </HeadlessDialogPanel>
-              </HeadlessTransitionChild>
-            </div>
+                  <div class="flex items-center gap-2 mt-1">
+                    <div class="w-3 h-3 rounded-full" :style="{ backgroundColor: cart.color.hex_code }" />
+                    <span class="text-gray-500">{{ cart.size.name }}</span>
+                  </div>
+                  <div class="flex items-center justify-between mt-2">
+                    <div class="flex items-center border rounded overflow-hidden">
+                      <button
+                        class="px-2 py-1 bg-gray-100 hover:bg-gray-200 transition-colors"
+                        @click="updateQuantity(cart.productId, cart.variantId, Math.max(1, cart.quantity - 1), cart.max_quantity)"
+                      >
+                        <i class="pi pi-minus text-xs" />
+                      </button>
+                      <span class="w-8 text-center font-medium">{{ cart.quantity }}</span>
+                      <button
+                        class="px-2 py-1 bg-gray-100 hover:bg-gray-200 transition-colors"
+                        @click="updateQuantity(cart.productId, cart.variantId, Math.min(cart.max_quantity, cart.quantity + 1), cart.max_quantity)"
+                      >
+                        <i class="pi pi-plus text-xs" />
+                      </button>
+                    </div>
+                    <span class="text-gray-900 font-medium">{{ formatPrice(cart.price) }}</span>
+                  </div>
+                </div>
+              </div>
+            </li>
+          </TransitionGroup>
+
+          <div v-if="cartItems.length === 0" class="flex justify-center items-center md:h-40">
+            <p class="text-gray-500 text-xl font-oswald">
+              Váš košík je prázdný
+            </p>
           </div>
         </div>
-      </HeadlessDialog>
-    </HeadlessTransitionRoot>
-  </ClientOnly>
+
+        <div v-auto-animate class="border-t border-gray-200 p-4">
+          <!-- Slevový kupón -->
+          <div min-h-10px>
+            <CouponComponent />
+          </div>
+
+          <div v-if="discount.isActive" class="flex justify-between text-base font-medium text-gray-900 mb-2">
+            <p class="flex items-center">
+              Kupón:
+              <span class="bg-primary-100 px-2 text-base rounded-md ml-1 font-bold">{{ discount.name }}</span>
+              <button class="ml-1" @click="removeDiscount()">
+                <i class="pi pi-times hover:text-red-500 transition-colors" />
+              </button>
+            </p>
+            <p class="text-red-600 font-bold">
+              -{{ formatPrice(discount.discountedAmount) }}
+            </p>
+          </div>
+
+          <div class="flex justify-between text-base font-medium text-gray-900 mt-2">
+            <p>Mezisoučet</p>
+            <p>{{ formatPrice(totalPrice) }}</p>
+          </div>
+
+          <p class="mt-1 text-sm text-gray-500">
+            Doprava a daně budou vypočítány při pokladně.
+          </p>
+
+          <div class="mt-4">
+            <NuxtLink :disabled="cartItems.length === 0" @click="redirectToCheckout()">
+              <Button :class="cartItems.length === 0 ? 'cursor-disabled opacity-30!' : ''" class="w-full bg-primary-500 text-white py-3 rounded font-medium hover:bg-primary-600 transition-colors">
+                Přejít k pokladně
+              </Button>
+            </NuxtLink>
+          </div>
+
+          <div class="mt-3 text-center">
+            <p class="text-sm text-gray-500">
+              nebo
+            </p>
+            <button
+              class="w-full text-primary-500 py-2 hover:text-primary-700 transition-colors font-medium"
+              @click="toggleCart()"
+            >
+              Pokračovat v nákupu
+            </button>
+          </div>
+        </div>
+      </div>
+    </Transition>
+  </div>
 </template>
 
 <style scoped>
+/* Fade animace pro overlay */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Slide animace pro panel košíku */
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.slide-enter-from,
+.slide-leave-to {
+  transform: translateX(100%);
+}
+
+/* Animace pro položky v košíku */
 .list-enter-active,
 .list-leave-active {
-  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition: all 0.5s ease;
 }
 
 .list-enter-from,
 .list-leave-to {
   opacity: 0;
-  transform: translateY(20px);
-}
-
-.list-leave-active {
-  position: absolute;
-  width: 100%;
-  z-index: -1; /* Přidáno - zajistí, že odstraňovaný prvek bude pod ostatními */
+  transform: translateY(30px);
 }
 
 .list-move {
   transition: transform 0.5s ease;
-  position: relative; /* Přidáno - zajistí lepší relativní pohyb */
-  z-index: 1; /* Přidáno - zajistí, že pohybující se prvky budou nad odstraňovanými */
 }
 </style>

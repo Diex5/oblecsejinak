@@ -14,6 +14,13 @@ const { addToCart } = useCart()
 const { isInStock, price, currentVariant, quantity } = storeToRefs(useProduct())
 
 const visible = ref(false)
+
+function addToCartButton () {
+  if (isInStock.value) {
+    addToCart(props.product, currentVariant.value, price.value, quantity.value)
+    visible.value = false
+  }
+}
 </script>
 
 <template>
@@ -78,7 +85,7 @@ const visible = ref(false)
             class="!text-1.4rem !py-4 font-oswald!  !text-black" bg-primary-500
             icon="pi pi-cart-plus"
             label="Přidat do košíku"
-            @click="addToCart(product, currentVariant, price, quantity)"
+            @click="addToCartButton()"
           />
         </div>
       </Dialog>

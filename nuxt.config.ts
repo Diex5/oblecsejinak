@@ -51,6 +51,10 @@ export default defineNuxtConfig({
   css: [
     '@unocss/reset/tailwind.css',
     'primeicons/primeicons.css',
+    'swiper/css',
+    'swiper/css/navigation',
+    'swiper/css/pagination',
+    'swiper/css/scrollbar',
   ],
 
   runtimeConfig: {

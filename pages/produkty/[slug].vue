@@ -18,7 +18,7 @@ const home = ref({
 
 const items = computed(() => [
   { label: 'Produkty', route: '/produkty' },
-  { label: product.value.name || 'Produkt' },
+  { label: product.value?.name || 'Produkt' },
 ])
 
 // Zbytek vaší původní logiky pro sticky bar a animace
@@ -56,11 +56,12 @@ const enter = ref({
 </script>
 
 <template>
-  <div>
+  <div w-full max-w-full pb-6rem>
     <div v-if="product">
       <div class="container px-6 mx-auto">
+        <NotifyToast />
         <!-- Breadcrumb -->
-        <div v-motion-fade-visible-once class="py-4 mb-8 ">
+        <div v-motion-fade-visible-once class="md:py-4 py-1 md:mb-8 ">
           <Breadcrumb :home="home" :model="items">
             <template #item="{ item, props }">
               <router-link v-if="item.route" v-slot="{ href, navigate }" :to="item.route" custom>
@@ -89,7 +90,7 @@ const enter = ref({
           />
         </div>
 
-        <div ref="mainSection" class="v-motion-fade-visible mt-16 flex items-start gap-1rem md:gap-6rem lg:flex-row flex-col">
+        <div ref="mainSection" class="v-motion-fade-visible md:mt-16 mt-4 flex items-start gap-1rem md:gap-6rem lg:flex-row flex-col">
           <!-- Informace o produktu -->
           <ProductInfo
             :product="product"
@@ -100,6 +101,8 @@ const enter = ref({
             :product="product"
             :colors="availableColorsForSelectedSize"
             :sizes="availableSizesForSelectedColor"
+            :reviews="77"
+            :rating="4.5"
           />
         </div>
 

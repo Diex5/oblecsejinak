@@ -3,7 +3,7 @@
 
 <template>
   <div font-sans>
-    <Navigation />
+    <NavigationBar />
     <NuxtLoadingIndicator />
     <div>
       <Toast />
