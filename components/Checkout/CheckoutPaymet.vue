@@ -1,5 +1,5 @@
 <script setup lang="ts">
-const { errors } = storeToRefs(useStripeStore())
+const { errors, stripe } = storeToRefs(useStripeStore())
 
 const lastError = computed(() => errors.value[errors.value.length - 1] || null)
 </script>

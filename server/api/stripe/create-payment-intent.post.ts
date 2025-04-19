@@ -29,6 +29,9 @@ export default defineEventHandler(async event => {
       metadata: {
         uuid: userData.uuid,
       },
+      address: {
+        country: 'CZ',
+      },
     })
 
     const paymentIntent = await stripe.paymentIntents.create({
