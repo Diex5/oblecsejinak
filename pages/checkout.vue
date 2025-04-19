@@ -111,9 +111,9 @@ const createOrder = handleSubmit(async values => {
         <i class="pi pi-download" />
         Získejte okamžitý přístup
       </div>
-      <Button @click="createOrder">
+      <!--  <Button @click="createOrder">
         TEst objednavka
-      </Button>
+      </Button> -->
     </div>
     <ProgressBar v-if="isSubmitting" mb-1rem mode="indeterminate" style="height: 6px" />
 
